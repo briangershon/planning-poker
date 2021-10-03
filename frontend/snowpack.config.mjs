@@ -17,20 +17,7 @@ export default {
     target: 'es2018',
   },
   packageOptions: {
-    polyfillNode: true,
-    rollup: {
-      // ensure react/react-dom not duplicated when using CJS modules
-      // https://github.com/snowpackjs/snowpack/issues/3033#issuecomment-905481198
-      plugins: [
-        {
-          name: "externalize-react",
-          options: (options) => {
-            const isSnowpackExternal = options.external;
-            options.external = (id) => id === "react" || id === "react-dom" || isSnowpackExternal(id);
-          }
-        }
-      ]
-    }
+    /* ... */
   },
   devOptions: {
     /* ... */
