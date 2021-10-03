@@ -1,5 +1,7 @@
 # planning-poker
 
+Live site hosted at <https://planning-poker.pages.dev/>
+
 ![Build Status](https://github.com/briangershon/planning-poker/workflows/Continuous%20Integration/badge.svg)
 
 ## Run front-end locally

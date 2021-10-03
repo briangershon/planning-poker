@@ -1,7 +1,7 @@
 {
-  "name": "react-minimal",
-  "version": "2.0.0",
-  "description": "A clean, simple front-end starter",
+  "name": "planning-poker",
+  "version": "0.0.1",
+  "description": "Planning Poker built on Cloudflare Pages and Workers",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "snowpack dev",
@@ -23,6 +23,7 @@
   "dependencies": {
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.3.0"
   }
 }
