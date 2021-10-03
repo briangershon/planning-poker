@@ -1,0 +1,28 @@
+{
+  "name": "react-minimal",
+  "version": "2.0.0",
+  "description": "A clean, simple front-end starter",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "scripts": {
+    "start": "snowpack dev",
+    "build": "snowpack build",
+    "test": "jest specs --watch",
+    "test-ci": "jest specs"
+  },
+  "author": "Brian Gershon",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.14.9",
+    "@babel/plugin-transform-runtime": "^7.15.0",
+    "@babel/preset-env": "^7.15.6",
+    "@snowpack/plugin-react-refresh": "^2.5.0",
+    "jest": "^27.2.4",
+    "snowpack": "^3.8.8"
+  },
+  "private": true,
+  "dependencies": {
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
