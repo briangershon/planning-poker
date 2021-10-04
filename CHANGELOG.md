@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Add initial React static pages, navigation and routing
-- Add basic theme and styling
+- Add React static Home and About pages, with navigation and routing
+- Add theme and styling
 
 ## [0.0.1] - 2021-10-03
 ### Added

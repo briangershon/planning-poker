@@ -1,0 +1,60 @@
+.app {
+  margin: auto;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  background-color: #e4572e;
+}
+
+.content {
+  flex: 2;
+  background-color: #daf1fb;
+  padding: 2rem 3rem;
+  overflow: auto;
+}
+
+.nav {
+  display: block;
+  flex: 1;
+  padding: 7rem 1rem;
+  min-width: 140px;
+}
+
+.nav ul {
+  padding: 0;
+  list-style-type: none;
+}
+
+.nav li {
+  margin: 10px;
+}
+
+.nav a {
+  text-decoration: none;
+}
+
+.nav a,
+.nav a:visited {
+  color: #111;
+}
+
+.nav a.active,
+.nav a.active:visited {
+  color: #ffd970;
+  /* font-weight: bold; */
+}
+
+@media only screen and (max-width: 650px) {
+  .app {
+    flex-direction: column;
+  }
+  .nav {
+    padding: 0;
+  }
+
+  .nav li {
+    display: inline-block;
+    padding: 0;
+  }
+}
