@@ -6,17 +6,17 @@
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
-    "test": "jest specs --watch",
-    "test-ci": "jest specs"
+    "test": "web-test-runner \"src/**/*.test.jsx\" --watch",
+    "test-ci": "web-test-runner \"src/**/*.test.jsx\""
   },
   "author": "Brian Gershon",
   "license": "MIT",
   "devDependencies": {
-    "@babel/plugin-transform-react-jsx": "^7.14.9",
-    "@babel/plugin-transform-runtime": "^7.15.0",
-    "@babel/preset-env": "^7.15.6",
     "@snowpack/plugin-react-refresh": "^2.5.0",
-    "jest": "^27.2.4",
+    "@snowpack/web-test-runner-plugin": "^0.2.2",
+    "@testing-library/react": "^12.1.2",
+    "@web/test-runner": "^0.13.18",
+    "chai": "^4.3.4",
     "snowpack": "^3.8.8"
   },
   "private": true,
