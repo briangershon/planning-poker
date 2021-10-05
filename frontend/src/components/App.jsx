@@ -11,6 +11,8 @@ import styles from './App.module.css';
 import HomePage from './HomePage';
 import AboutPage from './AboutPage';
 
+import PlayGame from './PlayGame';
+
 function App() {
   return (
     <Router>
@@ -39,6 +41,9 @@ function App() {
             </Route>
             <Route path="/about">
               <AboutPage />
+            </Route>
+            <Route path="/game/:gameId">
+              <PlayGame />
             </Route>
           </Switch>
         </div>

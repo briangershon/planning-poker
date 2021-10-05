@@ -1,0 +1,39 @@
+.ul {
+  color: blue;
+  padding: 0;
+  list-style-type: none;
+}
+
+.li {
+  display: inline-block;
+  padding: 16px;
+  margin: 10px;
+}
+
+.card {
+  border: 1px solid blue;
+  border-radius: 5px;
+  width: 60px;
+  height: 80px;
+  margin: auto;
+}
+
+.you .card {
+  background: blue;
+  color: white;
+}
+
+.button {
+  color: blue;
+  border: 1px solid blue;
+  border-radius: 5px;
+  background-color: white;
+  padding: 10px;
+  margin: 10px;
+  transition: all 0.4s ease 0s;
+}
+
+.button:hover {
+  letter-spacing: 1px;
+  padding: 12px;
+}
