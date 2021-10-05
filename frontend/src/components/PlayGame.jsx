@@ -79,12 +79,13 @@ function PlayGame() {
           End Game
         </button>
       </div>
+      <hr />
       <div>
         <button
           onClick={() =>
             dispatch(
               addPlayer({
-                name: 'New Player',
+                name: 'New',
                 value: null,
               })
             )
