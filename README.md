@@ -12,6 +12,19 @@ Live site hosted at <https://planning-poker.pages.dev/>
     npm start
     # visit http://localhost:8080/
 
+## Run Cloudflare worker locally
+
+    # though doesn't work yet for Durable Objects
+
+    cd workers
+    wrangler dev
+    # visit http://127.0.0.1:8787
+
+## Publish Cloudflare worker
+
+    cd workers
+    wrangler publish
+
 ## Run Tests
 
     cd frontend

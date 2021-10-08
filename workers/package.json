@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "name": "planning-poker-workers",
+  "version": "1.0.0",
+  "module": "./dist/index.mjs",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write '**/*.{js,css,json,md}'"
+  },
+  "author": "Brian Gershon <briangershon@users.noreply.github.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.5",
+    "prettier": "^1.19.1",
+    "rollup": "^2.58.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-terser": "^7.0.2"
+  },
+  "dependencies": {
+    "is-even": "^1.0.0"
+  }
+}
