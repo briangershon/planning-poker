@@ -14,6 +14,9 @@ command = "npm run build"
 format = "modules"
 main = "./index.mjs"
 
+[miniflare]
+durable_objects_persist = true
+
 [durable_objects]
 bindings = [{name = "COUNTER", class_name = "Counter"}]
 
