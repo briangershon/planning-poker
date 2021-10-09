@@ -1,6 +1,6 @@
-import { terser } from 'rollup-plugin-terser'
-import { nodeResolve } from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
+import { terser } from 'rollup-plugin-terser';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default {
   input: 'src/index.mjs',
@@ -8,7 +8,7 @@ export default {
     exports: 'named',
     format: 'es',
     file: 'dist/index.mjs',
-    sourcemap: true,
+    sourcemap: true
   },
-  plugins: [commonjs(), nodeResolve({ browser: true }), terser()],
-}
+  plugins: [commonjs(), nodeResolve({ browser: true }), terser()]
+};
