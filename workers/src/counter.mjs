@@ -1,6 +1,5 @@
 export class Counter {
   constructor(state, env) {
-    console.log('CONSTRUCTOR');
     this.state = state;
 
     // TODO: Miniflare doesn't yet support blockConcurrencyWhile()
