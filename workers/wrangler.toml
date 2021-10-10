@@ -18,8 +18,16 @@ main = "./index.mjs"
 durable_objects_persist = true
 
 [durable_objects]
-bindings = [{name = "COUNTER", class_name = "Counter"}]
+bindings = [
+    {name = "COUNTER", class_name = "Counter"},
+    {name = "GAME", class_name = "Game"},
+]
 
 [[migrations]]
-tag = "v1" # Should be unique for each entry
+tag = "v1"
 new_classes = ["Counter"]
+
+[[migrations]]
+tag = "v2"
+new_classes = ["Game"]
+deleted_classes = ["Counter"]

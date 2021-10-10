@@ -36,3 +36,7 @@ Live site hosted at <https://planning-poker.pages.dev/>
 
     cd workers
     wrangler publish
+
+## Sample curl requests
+
+    curl -i --data '{"name": "Brian"}' http://localhost:8787/games/123/join
