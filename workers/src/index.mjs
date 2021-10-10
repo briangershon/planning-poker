@@ -1,8 +1,5 @@
-import isOdd from 'is-odd';
-
 // In order for the workers runtime to find the class that implements
 // our Durable Object namespace, we must export it from the root module.
-export { Counter } from './counter.mjs';
 export { Game } from './game.mjs';
 
 export default {

@@ -19,7 +19,6 @@ durable_objects_persist = true
 
 [durable_objects]
 bindings = [
-    {name = "COUNTER", class_name = "Counter"},
     {name = "GAME", class_name = "Game"},
 ]
 
