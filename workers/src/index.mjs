@@ -1,5 +1,3 @@
-// In order for the workers runtime to find the class that implements
-// our Durable Object namespace, we must export it from the root module.
 export { Game } from './game.mjs';
 
 export default {
@@ -13,7 +11,6 @@ export default {
 };
 
 async function handleRequest(request, env) {
-  // console.log(request);
   let url = new URL(request.url);
 
   // Add user to a game: `/games/:gameId/join`
@@ -30,11 +27,13 @@ async function handleRequest(request, env) {
   let id = env.GAME.idFromName('1234');
   let obj = env.GAME.get(id);
   let resp = await obj.fetch(new Request('http://durable/'));
-  let results = JSON.stringify(await resp.json(), null, 2)
+  let results = JSON.stringify(await resp.json(), null, 2);
   return new Response(results, {
     headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
       'content-type': 'application/json;charset=UTF-8'
     }
   });
-
 }

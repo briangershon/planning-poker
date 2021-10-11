@@ -1,6 +1,8 @@
-# planning-poker
+# planningpoker.games
 
-Live site hosted at <https://planning-poker.pages.dev/>
+Live website hosted at <https://planningpoker.games/>
+
+API hosted at <https://poker.brianfive.workers.dev/>
 
 ![Build Status](https://github.com/briangershon/planning-poker/workflows/Continuous%20Integration/badge.svg)
 
