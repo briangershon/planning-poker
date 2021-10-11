@@ -6,7 +6,7 @@
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
-    "build:prod": "snowpack build --config ./snowpack-production.config.js",
+    "build:prod": "snowpack build --config ./snowpack-production.config.mjs",
     "test": "web-test-runner \"src/**/*.test.jsx\" --watch",
     "test-ci": "web-test-runner \"src/**/*.test.jsx\""
   },
