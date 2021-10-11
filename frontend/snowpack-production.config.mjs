@@ -4,7 +4,7 @@ console.log('NODE_ENV', process.env.NODE_ENV);
 
 export default {
   env: {
-    API_URL: 'http://localhost:8787/api',
+    API_URL: 'https://planningpoker.games/api',
   },
   mount: {
     public: '/',

@@ -1,11 +1,16 @@
 name = "poker"
 type = "javascript"
-route = ''
-zone_id = ''
 usage_model = ''
 compatibility_flags = []
-workers_dev = true
 compatibility_date = "2021-10-07"
+workers_dev = false
+route = "*planningpoker.games/api*"
+zone_id = "b381a74a99cea88a48fd3999c9d04e90"
+
+# USER is the "planning-poker-user" namespace
+kv_namespaces = [
+    { binding = "USER", id = "b1f78e3dc5ac475cb1f867b6db37bcb0" }
+]
 
 [build]
 command = "npm run build"

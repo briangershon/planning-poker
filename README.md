@@ -2,14 +2,19 @@
 
 Live website hosted at <https://planningpoker.games/>
 
-API hosted at <https://poker.brianfive.workers.dev/>
+API hosted at <https://planningpoker.games/api>
 
 ![Build Status](https://github.com/briangershon/planning-poker/workflows/Continuous%20Integration/badge.svg)
 
-## Front-end
+## Run application locally
 
-### Run front-end locally
+    # in on terminal window
+    cd workers
+    nvm use       # miniflare needs Node > 12.x
+    npm run dev   # uses miniflare instead of `wrangler dev`
+    # api is running at http://localhost:8787/api
 
+    # in 2nd terminal window
     cd frontend
     npm install
     npm start
@@ -20,21 +25,18 @@ API hosted at <https://poker.brianfive.workers.dev/>
     cd frontend
     npm test
 
-### Package project up in dist folder for release to server
+### Package project up for PRODUCTION
 
     cd frontend
-    npm run build
+    npm run build:prod
 
-## Run back-end locally
+## Publish
 
-### Run Cloudflare worker locally
+Frontend via:
 
-    cd workers
-    nvm use         # miniflare needs Node > 12.x
-    npm run dev   # uses miniflare instead of `wrangler dev`
-    # visit http://127.0.0.1:8787
-
-## Publish Cloudflare worker
+    # push to this github repo and Cloudflare pages runs `npm run build:prod`
+    
+Cloudflare worker via
 
     cd workers
     wrangler publish
