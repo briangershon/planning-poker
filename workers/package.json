@@ -19,5 +19,8 @@
     "rollup": "^2.58.0",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-terser": "^7.0.2"
+  },
+  "dependencies": {
+    "itty-router": "^2.4.4"
   }
 }

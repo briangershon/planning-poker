@@ -1,6 +1,7 @@
 export class Game {
   constructor(state, env) {
     this.state = state;
+    this.env = env;
 
     // TODO: Miniflare doesn't yet support blockConcurrencyWhile()
     //       so using old `initialize()` style for now.
@@ -30,6 +31,8 @@ export class Game {
 
   async fetch(request) {
     await this.initialize();
+
+    const valueFromKV = await this.env.USER.get('someKey');
 
     // let url = new URL(request.url);
     // let currentValue = this.value;

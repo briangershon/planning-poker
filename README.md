@@ -35,10 +35,12 @@ API hosted at <https://planningpoker.games/api>
 Frontend via:
 
     # push to this github repo and Cloudflare pages runs `npm run build:prod`
-    
+
 Cloudflare worker via
 
     cd workers
+    nvm use
+    npm i @cloudflare/wrangler -g
     wrangler publish
 
 ## Sample curl requests
