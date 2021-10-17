@@ -8,14 +8,23 @@ API hosted at <https://planningpoker.games/api>
 
 ## Run application locally
 
-    # in on terminal window
+    # setup nvm to manage Node.js versions
+
+
+    # in on terminal window run the backend
     cd workers
     nvm use       # miniflare needs Node > 12.x
+
+    # create and add development env SECRETS
+    cp .env.TEMPLATE .env.local
+    # edit .env.local
+
     npm run dev   # uses miniflare instead of `wrangler dev`
     # api is running at http://localhost:8787/api
 
-    # in 2nd terminal window
+    # in second terminal window run the frontend
     cd frontend
+    nvm use
     npm install
     npm start
     # visit http://localhost:8080/
@@ -32,11 +41,16 @@ API hosted at <https://planningpoker.games/api>
 
 ## Publish
 
-Frontend via:
+### Frontend
 
     # push to this github repo and Cloudflare pages runs `npm run build:prod`
 
-Cloudflare worker via
+## Backend / Cloudflare worker
+
+    # setup Github oAuth secrets for production on Cloudflare dashboard
+    GITHUB_CLIENT_ID
+    GITHUB_CLIENT_SECRET
+    GITHUB_CLIENT_SUCCESS_URL to https://planningpoker.games
 
     cd workers
     nvm use

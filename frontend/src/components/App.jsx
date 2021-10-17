@@ -30,6 +30,11 @@ function App() {
                   About
                 </NavLink>
               </li>
+              <li>
+                <a href="/api/login/github" target="_self">
+                  Login
+                </a>
+              </li>
             </ul>
           </nav>
         </div>

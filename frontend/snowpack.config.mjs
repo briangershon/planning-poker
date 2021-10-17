@@ -1,17 +1,30 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
+import proxy from 'http2-proxy';
 
 console.log('NODE_ENV', process.env.NODE_ENV);
 
 export default {
   env: {
-    API_URL: 'http://localhost:8787/api',
+    API_URL: 'http://localhost:8080/api',
   },
   mount: {
     public: '/',
     src: '/dist',
   },
   routes: [
-    /* Enable an SPA Fallback in development: */
+    {
+      src: '/api/.*',
+      dest: (req, res) => {
+        // remove /api prefix (optional)
+        // req.url = req.url.replace(/^/api//, '/');
+
+        return proxy.web(req, res, {
+          hostname: 'localhost',
+          port: 8787,
+        });
+      },
+    },
+    /* Enable an SPA Fallback */
     { match: 'routes', src: '.*', dest: '/index.html' },
   ],
   optimize: {
