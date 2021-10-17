@@ -9,7 +9,8 @@ zone_id = "b381a74a99cea88a48fd3999c9d04e90"
 
 # USER is the "planning-poker-user" namespace
 kv_namespaces = [
-    { binding = "USER", id = "b1f78e3dc5ac475cb1f867b6db37bcb0" }
+    { binding = "USER", id = "b1f78e3dc5ac475cb1f867b6db37bcb0" },
+    { binding = "SESSION", id = "7e637ccc57574d3091200692d0e92258" }
 ]
 
 [build]

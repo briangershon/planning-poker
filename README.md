@@ -18,6 +18,10 @@ API hosted at <https://planningpoker.games/api>
     # create and add development env SECRETS
     cp .env.TEMPLATE .env.local
     # edit .env.local
+    GITHUB_CLIENT_ID
+    GITHUB_CLIENT_SECRET
+    GITHUB_CLIENT_SUCCESS_URL to http://localhost:8080
+
 
     npm run dev   # uses miniflare instead of `wrangler dev`
     # api is running at http://localhost:8787/api

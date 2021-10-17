@@ -9,12 +9,14 @@ function HomePage() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch(`${API_URL}/games/1234/join`, {
-      method: 'POST',
-      body: JSON.stringify({ name: 'Player one' }),
+    fetch(`${API_URL}/me`, {
+      method: 'GET',
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => console.log(data))
+      .catch((e) => {
+        console.log('server error', e);
+      });
   });
 
   return (
