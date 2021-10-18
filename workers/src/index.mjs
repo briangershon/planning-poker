@@ -3,12 +3,13 @@ import { createOAuthUserAuth } from '@octokit/auth-oauth-user';
 import { Octokit } from 'octokit';
 import { parse, serialize } from 'cookie';
 export { Game } from './game.mjs';
-import { v4 as uuid } from 'uuid';
+import { AuthUser } from './auth-user.ts';
+import { AuthSession } from './auth-session.ts';
 
 const router = Router();
 
-const withUser = request => {
-  request.user = { name: 'Brian', avatar_url: '' };
+const withUser = (request, env) => {
+  request.user = new AuthUser(env);
 };
 
 // requireUser optionally returns (early) if user not found on request
@@ -60,22 +61,20 @@ router.get('/api/login/github/callback', async (request, env) => {
   // console.log('octokit data', emails.data);
 
   // add/update user in KV store
-  const userKey = `GITHUB:${user.data.id}`;
-  console.log('userKey', userKey);
-  const { name, avatar_url, login, email } = user.data;
-  await env.USER.put(
-    userKey,
-    JSON.stringify({ name, avatar_url, login, email })
-  );
+  const authUser = new AuthUser(env);
+  const { id, name, avatar_url } = user.data;
+  await authUser.saveGithubUser(id, {
+    name,
+    avatarUrl: avatar_url,
+    token
+  });
 
-  // save user to KV store
-  const valueFromKV = await env.USER.get(userKey, { type: 'json' });
-  console.log('valueFromKV', valueFromKV);
+  console.log('RETRIEVE', await authUser.getGithubUser(id));
 
   // does existing session exist? If not, create a new one.
   if (!(existingSessionId && (await env.SESSION.get(existingSessionId)))) {
     // create session and send cookie
-    const sessionId = uuid();
+    const sessionId = AuthSession.generateSessionId();
     console.log('Create new session', sessionId);
 
     const cookie = serialize('session', sessionId, {
@@ -84,6 +83,7 @@ router.get('/api/login/github/callback', async (request, env) => {
     });
 
     // TODO: expire in 2 weeks to match cookie
+    const userKey = `GITHUB:${id}`;
     await env.SESSION.put(sessionId, userKey, { expirationTtl: 60 });
     const sessionKVValue = await env.SESSION.get(sessionId);
     console.log('sessionKVValue', sessionKVValue);
@@ -106,11 +106,23 @@ router.get('/api/login/github/callback', async (request, env) => {
 });
 
 router.get('/api/me', withUser, requireUser, async (request, env) => {
-  return new Response(JSON.stringify(request.user), {
+  // TODO: find Github User id via session
+  const id = 'xxx';
+  const user = await request.user.getGithubUser(id);
+  console.log('USER IS ', user);
+  if (user !== null) {
+    const { name, avatarUrl } = user;
+    return new Response(JSON.stringify({ name, avatarUrl }), {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8'
+      }
+    });
+  }
+  return new Response(JSON.stringify(null, {
     headers: {
       'content-type': 'application/json;charset=UTF-8'
     }
-  });
+  }));
 });
 
 router.post(

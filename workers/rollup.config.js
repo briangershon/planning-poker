@@ -1,6 +1,7 @@
 import { terser } from 'rollup-plugin-terser';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
 
 export default {
   input: 'src/index.mjs',
@@ -10,5 +11,5 @@ export default {
     file: 'dist/index.mjs',
     sourcemap: true
   },
-  plugins: [commonjs(), nodeResolve({ browser: true }), terser()]
+  plugins: [commonjs(), nodeResolve({ browser: true }), typescript(), terser()]
 };
