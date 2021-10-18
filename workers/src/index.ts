@@ -141,12 +141,8 @@ router.post(
     let resp = await obj.fetch(new Request('http://durable/'));
     let results = JSON.stringify(await resp.json(), null, 2);
 
-    // TODO: REMOVE CORS -- not needed anymore
     return new Response(results, {
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
-        'Access-Control-Allow-Headers': '*',
         'content-type': 'application/json;charset=UTF-8'
       }
     });
