@@ -2,9 +2,9 @@ import { Router } from 'itty-router';
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user';
 import { Octokit } from 'octokit';
 import { parse, serialize } from 'cookie';
-export { Game } from './game.mjs';
-import { AuthUser } from './auth-user.ts';
-import { AuthSession } from './auth-session.ts';
+export { Game } from './game';
+import { AuthUser } from './auth-user';
+import { AuthSession } from './auth-session';
 
 const router = Router();
 
@@ -32,9 +32,8 @@ router.get('/api/login/github', async (request, env) => {
 });
 
 router.get('/api/login/github/callback', async (request, env) => {
-  console.log('request.headers', request.headers);
   let existingSessionId = null;
-  const existingCookie = request.headers.get('cookie');
+  const existingCookie = request['headers'].get('cookie');
   console.log('existingCookie', existingCookie);
   if (existingCookie) {
     const parsedCookie = parse(existingCookie);
@@ -63,13 +62,13 @@ router.get('/api/login/github/callback', async (request, env) => {
   // add/update user in KV store
   const authUser = new AuthUser(env);
   const { id, name, avatar_url } = user.data;
-  await authUser.saveGithubUser(id, {
+  await authUser.saveGithubUser('' + id, {
     name,
     avatarUrl: avatar_url,
     token
   });
 
-  console.log('RETRIEVE', await authUser.getGithubUser(id));
+  // console.log('RETRIEVE', await authUser.getGithubUser('' + id));
 
   // does existing session exist? If not, create a new one.
   if (!(existingSessionId && (await env.SESSION.get(existingSessionId)))) {
@@ -109,7 +108,6 @@ router.get('/api/me', withUser, requireUser, async (request, env) => {
   // TODO: find Github User id via session
   const id = 'xxx';
   const user = await request.user.getGithubUser(id);
-  console.log('USER IS ', user);
   if (user !== null) {
     const { name, avatarUrl } = user;
     return new Response(JSON.stringify({ name, avatarUrl }), {
@@ -118,11 +116,11 @@ router.get('/api/me', withUser, requireUser, async (request, env) => {
       }
     });
   }
-  return new Response(JSON.stringify(null, {
+  return new Response(JSON.stringify(null), {
     headers: {
       'content-type': 'application/json;charset=UTF-8'
     }
-  }));
+  });
 });
 
 router.post(

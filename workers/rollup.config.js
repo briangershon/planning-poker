@@ -4,7 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: 'src/index.mjs',
+  input: 'src/index.ts',
   output: {
     exports: 'named',
     format: 'es',
