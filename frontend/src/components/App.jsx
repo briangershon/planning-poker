@@ -13,11 +13,33 @@ import AboutPage from './AboutPage';
 
 import PlayGame from './PlayGame';
 
+import { useSelector, useDispatch } from 'react-redux';
+
 function App() {
+  const user = useSelector((state) => state.user);
   return (
     <Router>
       <div className={styles.app}>
         <div>
+          <div className={styles.login}>
+            {user.name && (
+              <div>
+                <img src={user.avatarUrl} width="40" /> {user.name}{' '}
+                <div>
+                  <a href="/api/logout" target="_self">
+                    Logout
+                  </a>
+                </div>
+              </div>
+            )}
+            {!user.name && (
+              <div>
+                <a href="/api/login/github" target="_self">
+                  Login
+                </a>
+              </div>
+            )}
+          </div>
           <nav className={styles.nav}>
             <ul>
               <li>
@@ -29,16 +51,6 @@ function App() {
                 <NavLink to="/about" activeClassName={styles.active}>
                   About
                 </NavLink>
-              </li>
-              <li>
-                <a href="/api/login/github" target="_self">
-                  Login
-                </a>
-              </li>
-              <li>
-                <a href="/api/logout" target="_self">
-                  Logout
-                </a>
               </li>
             </ul>
           </nav>

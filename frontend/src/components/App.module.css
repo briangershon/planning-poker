@@ -14,10 +14,37 @@
   overflow: auto;
 }
 
+.login {
+  padding: 1rem;
+  font-size: 1.75rem;
+}
+
+.login img {
+  border-radius: 4em;
+  border: 3px solid #ccc;
+  vertical-align: middle;
+}
+
+.login a {
+  text-decoration: none;
+  font-size: 1.25rem;
+}
+
+.login a,
+.login a:visited {
+  color: #111;
+}
+
+.login a.active,
+.login a.active:visited {
+  color: #ffd970;
+  /* font-weight: bold; */
+}
+
 .nav {
   display: block;
   flex: 1;
-  padding: 7rem 1rem;
+  padding: 1rem 1rem;
   min-width: 140px;
 }
 
@@ -49,8 +76,14 @@
   .app {
     flex-direction: column;
   }
+
   .nav {
     padding: 0;
+  }
+
+  .nav ul {
+    padding: 0;
+    margin: 0;
   }
 
   .nav li {

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { createGame } from '../store/pokerSlice';
+import { updateUser } from '../store/userSlice';
 const { API_URL } = import.meta.env;
 
 function HomePage() {
@@ -15,10 +16,10 @@ function HomePage() {
       .then((response) => response.json())
       .then((data) => {
         if (data !== null) {
-          console.log('TODO: Update user state to', data);
+          dispatch(updateUser({ ...data }));
           return;
         }
-        console.log('Unauthenticated user')
+        // console.log('Unauthenticated user');
       })
       .catch((e) => {
         console.log('server error', e);
