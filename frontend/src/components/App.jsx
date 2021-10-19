@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { updateUser } from '../store/userSlice';
+const { API_URL } = import.meta.env;
+
 import PropTypes from 'prop-types';
 import {
   BrowserRouter as Router,
@@ -16,7 +19,25 @@ import PlayGame from './PlayGame';
 import { useSelector, useDispatch } from 'react-redux';
 
 function App() {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    fetch(`${API_URL}/me`, {
+      method: 'GET',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data !== null) {
+          dispatch(updateUser({ ...data }));
+          return;
+        }
+      })
+      .catch((e) => {
+        console.log('server error', e);
+      });
+  });
+
   return (
     <Router>
       <div className={styles.app}>
