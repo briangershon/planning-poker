@@ -35,6 +35,11 @@ function App() {
                   Login
                 </a>
               </li>
+              <li>
+                <a href="/api/logout" target="_self">
+                  Logout
+                </a>
+              </li>
             </ul>
           </nav>
         </div>

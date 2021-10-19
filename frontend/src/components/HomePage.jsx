@@ -13,7 +13,13 @@ function HomePage() {
       method: 'GET',
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => {
+        if (data !== null) {
+          console.log('TODO: Update user state to', data);
+          return;
+        }
+        console.log('Unauthenticated user')
+      })
       .catch((e) => {
         console.log('server error', e);
       });

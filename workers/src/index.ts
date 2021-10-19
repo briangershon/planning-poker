@@ -1,27 +1,33 @@
 import { Router } from 'itty-router';
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user';
 import { Octokit } from 'octokit';
-import { parse, serialize } from 'cookie';
 export { Game } from './game';
 import { AuthUser } from './auth-user';
 import { AuthSession } from './auth-session';
+import { serialize } from 'cookie';
 
 const router = Router();
 
-const withUser = (request, env) => {
-  request.user = new AuthUser(env);
+const withUser = async (request, env) => {
+  request.user = null;
+
+  const sessionId = AuthSession.sessionIdFromCookieHeader(
+    request['headers'].get('cookie')
+  );
+
+  if (sessionId) {
+    const sessionUser = new AuthSession(env);
+    const userId = await sessionUser.getUserBySession(sessionId);
+    const authUser = new AuthUser(env);
+    request.user = await authUser.getUser(userId);
+  }
 };
 
 // requireUser optionally returns (early) if user not found on request
-const requireUser = request => {
+const requireUser = async request => {
   if (!request.user) {
     return new Response('Not Authenticated', { status: 401 });
   }
-  // // is there a session? Is session valid?
-  // return Response.redirect(
-  //   `https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}`,
-  //   302
-  // );
 };
 
 router.get('/api/login/github', async (request, env) => {
@@ -32,17 +38,14 @@ router.get('/api/login/github', async (request, env) => {
 });
 
 router.get('/api/login/github/callback', async (request, env) => {
-  let existingSessionId = null;
-  const existingCookie = request['headers'].get('cookie');
-  console.log('existingCookie', existingCookie);
-  if (existingCookie) {
-    const parsedCookie = parse(existingCookie);
-    console.log('parsedCookie', parsedCookie);
-    if (parsedCookie.session) {
-      existingSessionId = parsedCookie.session;
-    }
+  const session = new AuthSession(env);
+
+  const existingSessionId = AuthSession.sessionIdFromCookieHeader(
+    request['headers'].get('cookie')
+  );
+  if (existingSessionId && existingSessionId !== 'null' ) {
+    await session.deleteSession(existingSessionId);
   }
-  console.log('existingSessionId', existingSessionId);
 
   const auth = createOAuthUserAuth({
     clientId: env.GITHUB_CLIENT_ID,
@@ -59,63 +62,72 @@ router.get('/api/login/github/callback', async (request, env) => {
   const emails = await octokit.request('GET /user/emails');
   // console.log('octokit data', emails.data);
 
-  // add/update user in KV store
   const authUser = new AuthUser(env);
   const { id, name, avatar_url } = user.data;
-  await authUser.saveGithubUser('' + id, {
+
+  const userKey = `GITHUB:${id}`;
+
+  await authUser.saveUser(userKey, {
     name,
     avatarUrl: avatar_url,
     token
   });
 
-  // console.log('RETRIEVE', await authUser.getGithubUser('' + id));
+  const twoWeeks = 60 * 60 * 24 * 14;
 
-  // does existing session exist? If not, create a new one.
-  if (!(existingSessionId && (await env.SESSION.get(existingSessionId)))) {
-    // create session and send cookie
-    const sessionId = AuthSession.generateSessionId();
-    console.log('Create new session', sessionId);
+  const sessionId = await session.addSession(userKey, twoWeeks);
 
-    const cookie = serialize('session', sessionId, {
-      maxAge: 60 * 60 * 24 * 14, // 2 weeks
-      path: '/'
-    });
-
-    // TODO: expire in 2 weeks to match cookie
-    const userKey = `GITHUB:${id}`;
-    await env.SESSION.put(sessionId, userKey, { expirationTtl: 60 });
-    const sessionKVValue = await env.SESSION.get(sessionId);
-    console.log('sessionKVValue', sessionKVValue);
-
-    return new Response('', {
-      status: 302,
-      headers: {
-        Location: env.GITHUB_CLIENT_SUCCESS_URL,
-        'Set-Cookie': cookie
-      }
-    });
-  }
+  const cookie = serialize('session', sessionId, {
+    maxAge: twoWeeks,
+    path: '/'
+  });
 
   return new Response('', {
     status: 302,
     headers: {
-      Location: env.GITHUB_CLIENT_SUCCESS_URL
+      Location: env.GITHUB_CLIENT_SUCCESS_URL,
+      'Set-Cookie': cookie
     }
   });
 });
 
-router.get('/api/me', withUser, requireUser, async (request, env) => {
-  // TODO: find Github User id via session
-  const id = 'xxx';
-  const user = await request.user.getGithubUser(id);
-  if (user !== null) {
-    const { name, avatarUrl } = user;
+router.get('/api/logout', async (request, env) => {
+  const session = new AuthSession(env);
+
+  const existingSessionId = AuthSession.sessionIdFromCookieHeader(
+    request['headers'].get('cookie')
+  );
+
+  if (existingSessionId) {
+    await session.deleteSession(existingSessionId);
+  }
+
+  // clear session cookie and delete when browser closes
+  const cookie = serialize('session', null, {
+    path: '/'
+  });
+
+  return new Response('', {
+    status: 302,
+    headers: {
+      Location: '/',
+      'Set-Cookie': cookie
+    }
+  });
+
+  return Response.redirect('/', 302);
+});
+
+router.get('/api/me', withUser, async (request, env) => {
+  if (request.user !== null) {
+    const { name, avatarUrl } = request.user;
     return new Response(JSON.stringify({ name, avatarUrl }), {
       headers: {
         'content-type': 'application/json;charset=UTF-8'
       }
     });
   }
+
   return new Response(JSON.stringify(null), {
     headers: {
       'content-type': 'application/json;charset=UTF-8'

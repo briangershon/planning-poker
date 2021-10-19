@@ -20,19 +20,14 @@ export class AuthUser {
     this.env = env;
   }
 
-  async getGithubUser(id: string): Promise<User | null> {
-    const userKey = `GITHUB:${id}`;
-    return this.env.USER.get(userKey, {
+  async getUser(id: string): Promise<User | null> {
+    return this.env.USER.get(id, {
       type: 'json'
     });
   }
 
-  async saveGithubUser(id: string, user: User) {
+  async saveUser(id: string, user: User) {
     const { name, avatarUrl, token } = user;
-    const userKey = `GITHUB:${id}`;
-    await this.env.USER.put(
-      userKey,
-      JSON.stringify({ name, avatarUrl, token })
-    );
+    await this.env.USER.put(id, JSON.stringify({ name, avatarUrl, token }));
   }
 }
