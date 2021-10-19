@@ -1,21 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { createGame } from '../store/pokerSlice';
-const { API_URL } = import.meta.env;
 
 function HomePage() {
   const gameId = useSelector((state) => state.poker.gameId);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    fetch(`${API_URL}/games/1234/join`, {
-      method: 'POST',
-      body: JSON.stringify({ name: 'Player one' }),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
-  });
 
   return (
     <div>

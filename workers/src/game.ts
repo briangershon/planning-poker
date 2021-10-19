@@ -1,5 +1,23 @@
+interface Env {
+  USER: {
+    get(key: string): Promise<any>;
+    put(key: string, value: string): Promise<void>;
+  };
+}
+
+interface State {
+  storage: {
+    get(key: string): Promise<any>;
+    put(key: string, value: string): Promise<void>;
+  };
+}
+
 export class Game {
-  constructor(state, env) {
+  state: State;
+  env: Env;
+  value: string;
+
+  constructor(state: State, env: Env) {
     this.state = state;
     this.env = env;
 

@@ -36,3 +36,11 @@ jobs:
       - name: npm test
         run: npm run test-ci
         working-directory: ./frontend
+
+      - name: npm install
+        run: npm install
+        working-directory: ./workers
+
+      - name: npm test
+        run: npm run test-ci
+        working-directory: ./workers

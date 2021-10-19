@@ -11,7 +11,7 @@ export default {
     src: '/dist',
   },
   routes: [
-    /* Enable an SPA Fallback in development: */
+    /* Enable an SPA Fallback */
     { match: 'routes', src: '.*', dest: '/index.html' },
   ],
   optimize: {
