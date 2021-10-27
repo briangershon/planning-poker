@@ -43,7 +43,7 @@ router.get('/api/login/github/callback', async (request, env) => {
   const existingSessionId = AuthSession.sessionIdFromCookieHeader(
     request['headers'].get('cookie')
   );
-  if (existingSessionId && existingSessionId !== 'null' ) {
+  if (existingSessionId && existingSessionId !== 'null') {
     await session.deleteSession(existingSessionId);
   }
 
@@ -55,12 +55,7 @@ router.get('/api/login/github/callback', async (request, env) => {
 
   const { token } = await auth();
   const octokit = new Octokit({ auth: token });
-
   const user = await octokit.request('GET /user');
-  // console.log('octokit data', user.data);
-
-  const emails = await octokit.request('GET /user/emails');
-  // console.log('octokit data', emails.data);
 
   const authUser = new AuthUser(env);
   const { id, name, avatar_url } = user.data;
@@ -114,8 +109,6 @@ router.get('/api/logout', async (request, env) => {
       'Set-Cookie': cookie
     }
   });
-
-  return Response.redirect('/', 302);
 });
 
 router.get('/api/me', withUser, async (request, env) => {
