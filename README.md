@@ -51,10 +51,10 @@ API hosted at <https://planningpoker.games/api>
 
 ## Backend / Cloudflare worker
 
-    # setup Github oAuth secrets for production on Cloudflare dashboard
-    GITHUB_CLIENT_ID
-    GITHUB_CLIENT_SECRET
-    GITHUB_CLIENT_SUCCESS_URL to https://planningpoker.games
+    # setup Github oAuth secrets for production via wrangler
+    wrangler secret put GITHUB_CLIENT_ID
+    wrangler secret put GITHUB_CLIENT_SECRET
+    wrangler secret put GITHUB_CLIENT_SUCCESS_URL to https://planningpoker.games
 
     cd workers
     nvm use
