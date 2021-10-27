@@ -23,8 +23,8 @@ export class AuthSession {
 
   static sessionIdFromCookieHeader(
     rawCookieHeader: cookieHeader
-  ): sessionID | null {
-    if (rawCookieHeader === null) {
+  ): sessionID | null | undefined {
+    if (rawCookieHeader === null || rawCookieHeader === undefined) {
       return null;
     }
     const parsedCookie = parse(rawCookieHeader);
