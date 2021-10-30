@@ -35,7 +35,7 @@ function App() {
       .catch((e) => {
         console.log('server error', e);
       });
-  });
+  }, []);
 
   return (
     <Router>
