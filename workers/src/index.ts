@@ -156,7 +156,24 @@ router.post('/api/games', withUser, requireUser, async (request, env) => {
   });
 });
 
-// TODO: Delete game (DELETE /api/games/:gameId)
+// Delete game
+router.delete(
+  '/api/games/:gameId',
+  withUser,
+  requireUser,
+  async (request, env) => {
+    const { params } = request;
+    const userId = request.user.id;
+    const gameId = params.gameId;
+    await env.GAME.delete(`${userId}:${gameId}`);
+    return new Response(JSON.stringify({ gameId }), {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8'
+      }
+    });
+  }
+);
+
 // TODO: Update vote for user (and add user to game) (PUT /api/games/:gameId)
 // TODO: Fetch game status (GET /api/games/:gameId)
 

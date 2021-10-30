@@ -84,7 +84,7 @@ function App() {
             <Route path="/about">
               <AboutPage />
             </Route>
-            <Route path="/game/:gameId">
+            <Route path="/games/:gameId">
               <PlayGame />
             </Route>
           </Switch>

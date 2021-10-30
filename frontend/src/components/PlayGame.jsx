@@ -1,5 +1,8 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+const { API_URL } = import.meta.env;
+import { deleteGameId } from '../store/userSlice';
+
 
 import Players from './Players';
 import styles from './PlayGame.module.css';
@@ -21,13 +24,22 @@ function PlayGame() {
 
   let history = useHistory();
 
-  if (!game.gameId) {
-    history.push('/');
-  }
+  // if (!game.gameId) {
+  //   history.push('/');
+  // }
+
+  async function deleteCurrentGame() {
+    const response = await fetch(`${API_URL}/games/${gameId}`, {
+      method: 'DELETE',
+    });
+    const data = await response.json();
+    history.push(`/`);
+    dispatch(deleteGameId(gameId));
+  };
 
   return (
     <div>
-      Game ID is {gameId}. Game ID in state {game.gameId}.
+      Game ID is {gameId}.
       <Players
         you={game.you}
         players={game.players}
@@ -55,9 +67,7 @@ function PlayGame() {
             <button onClick={() => dispatch(vote('XXL'))}>XXL</button>
           </li>
           <li>
-            <button onClick={() => dispatch(vote('?'))}>
-              ?
-            </button>
+            <button onClick={() => dispatch(vote('?'))}>?</button>
           </li>
           <li>
             <button onClick={() => dispatch(vote(null))}>Clear</button>
@@ -93,6 +103,7 @@ function PlayGame() {
         >
           Add Player
         </button>
+        <button onClick={deleteCurrentGame}>Delete Game</button>
       </div>
     </div>
   );
