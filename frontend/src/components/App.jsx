@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { updateUser } from '../store/userSlice';
 const { API_URL } = import.meta.env;
 
-import PropTypes from 'prop-types';
 import {
   BrowserRouter as Router,
   Switch,

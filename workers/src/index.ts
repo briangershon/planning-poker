@@ -5,6 +5,7 @@ export { Game } from './game';
 import { AuthUser } from './auth-user';
 import { AuthSession } from './auth-session';
 import { serialize } from 'cookie';
+import { v4 as uuid } from 'uuid';
 
 const router = Router();
 
@@ -20,6 +21,7 @@ const withUser = async (request, env) => {
     const userId = await sessionUser.getUserBySession(sessionId);
     const authUser = new AuthUser(env);
     request.user = await authUser.getUser(userId);
+    request.user.id = userId;
   }
 };
 
@@ -111,10 +113,17 @@ router.get('/api/logout', async (request, env) => {
   });
 });
 
+// Get current user and their games
 router.get('/api/me', withUser, async (request, env) => {
   if (request.user !== null) {
-    const { name, avatarUrl } = request.user;
-    return new Response(JSON.stringify({ name, avatarUrl }), {
+    const { id, name, avatarUrl } = request.user;
+
+    const games = await env.GAME.list({ prefix: id });
+    const gameIds = games.keys.map(key => {
+      return key.name.slice(-(key.name.length - id.length - 1));
+    });
+
+    return new Response(JSON.stringify({ name, avatarUrl, gameIds }), {
       headers: {
         'content-type': 'application/json;charset=UTF-8'
       }
@@ -127,6 +136,29 @@ router.get('/api/me', withUser, async (request, env) => {
     }
   });
 });
+
+// Create game and persist ID
+router.post('/api/games', withUser, requireUser, async (request, env) => {
+  const userId = request.user.id;
+  const gameId = uuid();
+  const createdMillis = new Date().getTime();
+  await env.GAME.put(
+    `${userId}:${gameId}`,
+    JSON.stringify({
+      createdMillis
+    })
+  );
+
+  return new Response(JSON.stringify({ gameId, createdMillis }), {
+    headers: {
+      'content-type': 'application/json;charset=UTF-8'
+    }
+  });
+});
+
+// TODO: Delete game (DELETE /api/games/:gameId)
+// TODO: Update vote for user (and add user to game) (PUT /api/games/:gameId)
+// TODO: Fetch game status (GET /api/games/:gameId)
 
 router.post(
   '/api/games/:gameId/join',
