@@ -8,21 +8,17 @@ function Players({ you, players, showCards }) {
     <>
       <ul className={styles.ul}>
         <li className={styles.li}>
-          {you.value ? (
-            <CardVisible name={you.name} value={you.value} />
+          {you.vote ? (
+            <CardVisible name={you.name} value={you.vote} />
           ) : (
             <CardHidden name={you.name} />
           )}
         </li>
         {players.map((p) => {
           return (
-            <li className={styles.li}>
+            <li key={p.name} className={styles.li}>
               {showCards ? (
-                <CardVisible
-                  name={p.name}
-                  value={p.value}
-                  cardState="visible"
-                />
+                <CardVisible name={p.name} value={p.vote} cardState="visible" />
               ) : (
                 <CardHidden name={p.name} />
               )}

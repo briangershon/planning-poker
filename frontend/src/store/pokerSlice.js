@@ -1,28 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  gameId: null,
   showCards: false,
-  you: { name: 'You', value: null, id: new Date().getTime() },
+  you: { name: 'You', vote: null },
   players: [],
+  story: '',
 };
 
 export const pokerSlice = createSlice({
   name: 'poker',
   initialState,
   reducers: {
-    addPlayer: (state, action) => {
-      state.players.push({
-        id: new Date().getTime(),
-        name: action.payload.name,
-        value: action.payload.value,
-      });
-    },
-    createGame: (state) => {
-      state.gameId = 'xxx';
-    },
-    endGame: () => {
-      return initialState;
+    updatePlayers: (state, action) => {
+      // avoid infinite loops by updating existing array
+      // clear array
+      for (let j = 0; j < state.players.length; j++) {
+        state.players.pop();
+      }
+      // then append to array
+      for (let i = 0; i < action.payload.length; i++) {
+        state.players.push(action.payload[i]);
+      }
     },
     showCards: (state) => {
       state.showCards = true;
@@ -31,13 +29,21 @@ export const pokerSlice = createSlice({
       state.showCards = false;
     },
     vote: (state, action) => {
-      state.you.value = action.payload;
+      state.you.vote = action.payload;
+    },
+    updateStory: (state, action) => {
+      state.story = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addPlayer, createGame, endGame, showCards, hideCards, vote } =
-  pokerSlice.actions;
+export const {
+  showCards,
+  hideCards,
+  vote,
+  updateStory,
+  updatePlayers,
+} = pokerSlice.actions;
 
 export default pokerSlice.reducer;

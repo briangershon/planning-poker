@@ -1,10 +1,11 @@
 import { Router } from 'itty-router';
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user';
 import { Octokit } from 'octokit';
-export { Game } from './game';
+export { GameDO } from './game-durable-object';
 import { AuthUser } from './auth-user';
 import { AuthSession } from './auth-session';
 import { serialize } from 'cookie';
+import { v4 as uuid } from 'uuid';
 
 const router = Router();
 
@@ -20,6 +21,7 @@ const withUser = async (request, env) => {
     const userId = await sessionUser.getUserBySession(sessionId);
     const authUser = new AuthUser(env);
     request.user = await authUser.getUser(userId);
+    request.user.id = userId;
   }
 };
 
@@ -58,14 +60,15 @@ router.get('/api/login/github/callback', async (request, env) => {
   const user = await octokit.request('GET /user');
 
   const authUser = new AuthUser(env);
-  const { id, name, avatar_url } = user.data;
+  const { id, name, avatar_url, login } = user.data;
 
   const userKey = `GITHUB:${id}`;
 
   await authUser.saveUser(userKey, {
     name,
     avatarUrl: avatar_url,
-    token
+    token,
+    login
   });
 
   const twoWeeks = 60 * 60 * 24 * 14;
@@ -111,10 +114,17 @@ router.get('/api/logout', async (request, env) => {
   });
 });
 
+// Get current user and their games
 router.get('/api/me', withUser, async (request, env) => {
   if (request.user !== null) {
-    const { name, avatarUrl } = request.user;
-    return new Response(JSON.stringify({ name, avatarUrl }), {
+    const { id, name, avatarUrl } = request.user;
+
+    const games = await env.GAME.list({ prefix: id });
+    const gameIds = games.keys.map(key => {
+      return key.name.slice(-(key.name.length - id.length - 1));
+    });
+
+    return new Response(JSON.stringify({ name, avatarUrl, gameIds }), {
       headers: {
         'content-type': 'application/json;charset=UTF-8'
       }
@@ -128,22 +138,95 @@ router.get('/api/me', withUser, async (request, env) => {
   });
 });
 
-router.post(
-  '/api/games/:gameId/join',
+// Create game and persist ID
+router.post('/api/games', withUser, requireUser, async (request, env) => {
+  const userId = request.user.id;
+  const gameId = uuid();
+  const createdMillis = new Date().getTime();
+  await env.GAME.put(
+    `${userId}:${gameId}`,
+    JSON.stringify({
+      createdMillis
+    })
+  );
+
+  return new Response(JSON.stringify({ gameId, createdMillis }), {
+    headers: {
+      'content-type': 'application/json;charset=UTF-8'
+    }
+  });
+});
+
+// Delete game
+router.delete(
+  '/api/games/:gameId',
   withUser,
   requireUser,
   async (request, env) => {
-    const { params, query } = request;
+    const { params } = request;
+    const userId = request.user.id;
+    const gameId = params.gameId;
 
-    const body = await request.json();
-    const { name } = body;
-    if (!name) {
-      throw new Error('Missing Name field in request body.');
-    }
+    // Ask Durable Object to remove all its data to delete itself
+    let id = env.GAME_DO.idFromName(gameId);
+    let obj = env.GAME_DO.get(id);
+    await obj.fetch(new Request('http://durable/deallocate'));
 
-    let id = env.GAME.idFromName('1234');
-    let obj = env.GAME.get(id);
-    let resp = await obj.fetch(new Request('http://durable/'));
+    // delete game in KV
+    await env.GAME.delete(`${userId}:${gameId}`);
+
+    return new Response(JSON.stringify({ gameId }), {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8'
+      }
+    });
+  }
+);
+
+// Get game status (GET /api/games/:gameId)
+router.get(
+  '/api/games/:gameId',
+  withUser,
+  requireUser,
+  async (request, env) => {
+    const { params, user } = request;
+    const gameId = params.gameId;
+
+    let id = env.GAME_DO.idFromName(gameId);
+    let obj = env.GAME_DO.get(id);
+    let resp = await obj.fetch(
+      new Request(
+        'http://durable/?' + new URLSearchParams({ user: JSON.stringify(user) })
+      )
+    );
+    let results = JSON.stringify(await resp.json(), null, 2);
+
+    return new Response(results, {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8'
+      }
+    });
+  }
+);
+
+// Update vote for user (and add user to game) (PUT /api/games/:gameId)
+router.put(
+  '/api/games/:gameId',
+  withUser,
+  requireUser,
+  async (request, env) => {
+    // request.user is added via `withUser` middleware
+    const { params, query, user } = request;
+    const { gameId } = params;
+    const { story, vote } = query;
+    let id = env.GAME_DO.idFromName(gameId);
+    let obj = env.GAME_DO.get(id);
+    let resp = await obj.fetch(
+      new Request(
+        `http://durable/update-story?` +
+          new URLSearchParams({ story, vote, user: JSON.stringify(user) })
+      )
+    );
     let results = JSON.stringify(await resp.json(), null, 2);
 
     return new Response(results, {

@@ -1,29 +1,44 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { createGame } from '../store/pokerSlice';
+import { addGameId } from '../store/userSlice';
+const { API_URL } = import.meta.env;
 
 function HomePage() {
+  const userGameIds = useSelector((state) => state.user.gameIds);
   const gameId = useSelector((state) => state.poker.gameId);
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  async function newGame() {
+    const response = await fetch(`${API_URL}/games`, {
+      method: 'POST',
+    });
+    const data = await response.json();
+    dispatch(addGameId({ gameId: data.gameId }));
+    history.push(`/games/${data.gameId}`);
+  }
 
   return (
     <div>
-      {gameId && (
+      {!isLoggedIn && <div>Please login to play.</div>}
+      {!userGameIds.length && isLoggedIn && <div>No games in progress.</div>}
+      {userGameIds.length > 0 && isLoggedIn && (
         <div>
-          Go to <Link to={`/game/${gameId}`}>game in progress</Link>.
+          <div>Your Games</div>
+          <ul>
+            {userGameIds.map((gameId) => {
+              return (
+                <li key={gameId}>
+                  <Link to={`/games/${gameId}`}>Play game in progress</Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       )}
-
-      {!gameId && (
-        <button
-          onClick={() => {
-            dispatch(createGame());
-          }}
-        >
-          New Game
-        </button>
-      )}
+      {isLoggedIn && <button onClick={newGame}>New Game</button>}
     </div>
   );
 }

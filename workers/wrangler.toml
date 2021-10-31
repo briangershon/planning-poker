@@ -10,7 +10,8 @@ zone_id = "b381a74a99cea88a48fd3999c9d04e90"
 # USER is the "planning-poker-user" namespace
 kv_namespaces = [
     { binding = "USER", id = "b1f78e3dc5ac475cb1f867b6db37bcb0" },
-    { binding = "SESSION", id = "7e637ccc57574d3091200692d0e92258" }
+    { binding = "SESSION", id = "7e637ccc57574d3091200692d0e92258" },
+    { binding = "GAME", id = "c39cdc3092bb4e21b607b87fc790597e" }
 ]
 
 [build]
@@ -21,12 +22,12 @@ format = "modules"
 main = "./index.mjs"
 
 [miniflare]
-durable_objects_persist = true
+durable_objects_persist = false
 env_path = ".env.local"
 
 [durable_objects]
 bindings = [
-    {name = "GAME", class_name = "Game"},
+    {name = "GAME_DO", class_name = "GameDO"},
 ]
 
 [[migrations]]
@@ -37,3 +38,7 @@ new_classes = ["Counter"]
 tag = "v2"
 new_classes = ["Game"]
 deleted_classes = ["Counter"]
+
+[[migrations]]
+tag = "v3"
+new_classes = ["GameDO"]

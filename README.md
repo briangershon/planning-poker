@@ -64,3 +64,26 @@ API hosted at <https://planningpoker.games/api>
 ## Sample curl requests
 
     curl -i --data '{"name": "Brian"}' http://localhost:8787/games/123/join
+
+## What is the game architecture?
+
+Scope:
+
+- A game has an ID, a status, a story sentence, and array of users and their card votes.
+- No concept of game ownership/admin. Anyone can join and do anything in a game if they have the ID.
+- Get it working with polling (then use realtime websocket)
+
+Workflow:
+
+- Logged-in user creates game
+  - create unique gameId to be used in both route and in Durable Object ID
+  - persist gameId by user -- key: `userId:gameId` with value of `createDate` so we can delete games later.
+- Visit any valid game route to participate in game. (Participant needs to be logged in)
+- Users can cast votes, change story sentence, flip cards
+- Poll for updates
+
+## FAQs
+
+### When running locally, I see a "TypeError"
+
+When running locally, if you see `TypeError` and `The first argument must be of type string or an instance of Buffer. Received an instance of Uint8Array` you're using an old version of Node.js. Run `nvm use` to get the latest version.
