@@ -19,6 +19,9 @@ const withUser = async (request, env) => {
   if (sessionId) {
     const sessionUser = new AuthSession(env);
     const userId = await sessionUser.getUserBySession(sessionId);
+    if (!userId) {
+      return;
+    }
     const authUser = new AuthUser(env);
     request.user = await authUser.getUser(userId);
     request.user.id = userId;
