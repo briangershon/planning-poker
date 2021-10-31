@@ -22,9 +22,6 @@ export const pokerSlice = createSlice({
         state.players.push(action.payload[i]);
       }
     },
-    endGame: () => {
-      return initialState;
-    },
     showCards: (state) => {
       state.showCards = true;
     },
@@ -42,7 +39,6 @@ export const pokerSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  endGame,
   showCards,
   hideCards,
   vote,

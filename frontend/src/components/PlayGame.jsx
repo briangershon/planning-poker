@@ -10,7 +10,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   showCards,
   hideCards,
-  endGame,
   vote,
   updateStory,
   updatePlayers,
@@ -110,7 +109,8 @@ function PlayGame() {
       {isLoggedIn && (
         <div>
           <div>
-            Invite others by sending them this <Link to={gameInviteUrl}>link</Link>.
+            Invite others by sending them this{' '}
+            <Link to={gameInviteUrl}>link</Link>.
           </div>
           <div>
             Story: <strong>{game.story}</strong> (update:{' '}
@@ -168,16 +168,6 @@ function PlayGame() {
           ) : (
             <button onClick={() => dispatch(showCards())}>Show Cards</button>
           )}
-          <div>
-            <button
-              onClick={() => {
-                dispatch(endGame());
-                history.push('/');
-              }}
-            >
-              End Game
-            </button>
-          </div>
           <hr />
           <div>
             <button onClick={deleteCurrentGame}>Delete Game</button>
