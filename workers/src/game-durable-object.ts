@@ -1,6 +1,6 @@
 interface Env {
   USER: {
-    get(key: string): Promise<any>;
+    get(key: string, options: Object): Promise<any>;
     put(key: string, value: string): Promise<void>;
   };
 }
@@ -10,6 +10,7 @@ interface State {
     get(key: string): Promise<any>;
     put(key: string, value: string): Promise<void>;
     deleteAll(): Promise<void>;
+    list(options: Object): Promise<Map<string, any>>;
   };
 }
 
@@ -35,6 +36,7 @@ export class GameDO {
     // });
   }
 
+  // initialize with saved data if it exists
   async initialize() {
     let stored = await this.state.storage.get('story');
     if (stored === undefined) {
@@ -58,24 +60,68 @@ export class GameDO {
     await this.initializePromise;
 
     let url = new URL(request.url);
+
     switch (url.pathname) {
       case '/update-story':
-        const newStory = url.searchParams.get('story');
+        let newStory = url.searchParams.get('story');
+        if (newStory === 'undefined') newStory = null;
         if (newStory) {
           await this.state.storage.put('story', newStory);
           this.story = newStory;
         }
+
+        // update vote
+        let newVote = url.searchParams.get('vote');
+        if (newVote === 'undefined') newVote = null;
+        if (newVote) {
+          if (!['XS', 'S', 'M', 'L', 'XL', 'XXL', '?'].includes(newVote)) {
+            newVote = null;
+          }
+
+          const { id } = JSON.parse(url.searchParams.get('user'));
+          await this.state.storage.put(`VOTE|${id}`, newVote);
+        }
+
         break;
       case '/deallocate':
         await this.state.storage.deleteAll();
         break;
       case '/':
-        break;
+        const voteList = await this.state.storage.list({ prefix: 'VOTE|' });
+        const { id } = JSON.parse(url.searchParams.get('user'));
+        const rawVotes = Object.fromEntries(voteList);
+
+        // Strip out current user, just sent votes back from other players
+        let votes = [];
+        const userKeys = Object.keys(rawVotes);
+        for (let i = 0; i < userKeys.length; i++) {
+          let key = userKeys[i];
+          if (key !== `VOTE|${id}`) {
+            // convert IDs to names
+            const playerId = key.slice(-(key.length - 'VOTE|'.length));
+            const userInfo = await this.env.USER.get(playerId, {
+              type: 'json'
+            });
+            votes.push({ name: userInfo.name, vote: rawVotes[key] });
+          }
+        }
+
+        return new Response(
+          JSON.stringify({
+            story: this.story,
+            votes: votes
+          }),
+          {
+            headers: {
+              'content-type': 'application/json;charset=UTF-8'
+            }
+          }
+        );
       default:
         return new Response('Not found', { status: 404 });
     }
 
-    return new Response(JSON.stringify({ story: this.story }), {
+    return new Response(JSON.stringify({ status: 'ok' }), {
       headers: {
         'content-type': 'application/json;charset=UTF-8'
       }

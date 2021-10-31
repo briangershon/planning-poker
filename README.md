@@ -76,8 +76,8 @@ Scope:
 Workflow:
 
 - Logged-in user creates game
-    - create unique gameId to be used in both route and in Durable Object ID
-    - persist gameId by user -- key: `userId:gameId` with value of `createDate` so we can delete games later.
+  - create unique gameId to be used in both route and in Durable Object ID
+  - persist gameId by user -- key: `userId:gameId` with value of `createDate` so we can delete games later.
 - Visit any valid game route to participate in game. (Participant needs to be logged in)
 - Users can cast votes, change story sentence, flip cards
 - Poll for updates
@@ -86,4 +86,4 @@ Workflow:
 
 ### When running locally, I see a "TypeError"
 
-When running locally, if you see `TypeError` and `The first argument must be of type string or an instance of Buffer. Received an instance of Uint8Array` you're using an old version of Node.js. Run `nvm use`.
+When running locally, if you see `TypeError` and `The first argument must be of type string or an instance of Buffer. Received an instance of Uint8Array` you're using an old version of Node.js. Run `nvm use` to get the latest version.

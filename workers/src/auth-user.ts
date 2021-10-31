@@ -4,6 +4,7 @@ interface User {
   name: string;
   avatarUrl: string;
   token: string;
+  login: string;
 }
 
 interface Env {
@@ -27,7 +28,10 @@ export class AuthUser {
   }
 
   async saveUser(id: string, user: User) {
-    const { name, avatarUrl, token } = user;
+    let { name, avatarUrl, token, login } = user;
+    if (!name) {
+      name = login;
+    }
     await this.env.USER.put(id, JSON.stringify({ name, avatarUrl, token }));
   }
 }

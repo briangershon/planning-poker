@@ -60,14 +60,15 @@ router.get('/api/login/github/callback', async (request, env) => {
   const user = await octokit.request('GET /user');
 
   const authUser = new AuthUser(env);
-  const { id, name, avatar_url } = user.data;
+  const { id, name, avatar_url, login } = user.data;
 
   const userKey = `GITHUB:${id}`;
 
   await authUser.saveUser(userKey, {
     name,
     avatarUrl: avatar_url,
-    token
+    token,
+    login
   });
 
   const twoWeeks = 60 * 60 * 24 * 14;
@@ -188,12 +189,16 @@ router.get(
   withUser,
   requireUser,
   async (request, env) => {
-    const { params } = request;
+    const { params, user } = request;
     const gameId = params.gameId;
 
     let id = env.GAME_DO.idFromName(gameId);
     let obj = env.GAME_DO.get(id);
-    let resp = await obj.fetch(new Request('http://durable/'));
+    let resp = await obj.fetch(
+      new Request(
+        'http://durable/?' + new URLSearchParams({ user: JSON.stringify(user) })
+      )
+    );
     let results = JSON.stringify(await resp.json(), null, 2);
 
     return new Response(results, {
@@ -210,15 +215,16 @@ router.put(
   withUser,
   requireUser,
   async (request, env) => {
-    const { params, query } = request;
-    const gameId = params.gameId;
-
+    // request.user is added via `withUser` middleware
+    const { params, query, user } = request;
+    const { gameId } = params;
+    const { story, vote } = query;
     let id = env.GAME_DO.idFromName(gameId);
     let obj = env.GAME_DO.get(id);
     let resp = await obj.fetch(
       new Request(
         `http://durable/update-story?` +
-          new URLSearchParams({ story: query.story })
+          new URLSearchParams({ story, vote, user: JSON.stringify(user) })
       )
     );
     let results = JSON.stringify(await resp.json(), null, 2);

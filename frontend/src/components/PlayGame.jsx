@@ -59,6 +59,16 @@ function PlayGame() {
     dispatch(updateStory(newStory));
   }
 
+  async function sendVote(voteCasted) {
+    const response = await fetch(
+      `${API_URL}/games/${gameId}?` + new URLSearchParams({ vote: voteCasted }),
+      {
+        method: 'PUT',
+      }
+    );
+    dispatch(vote(voteCasted));
+  }
+
   const gameInviteUrl = `/games/${gameId}`;
 
   return (
@@ -83,28 +93,28 @@ function PlayGame() {
             <p>Choose your card:</p>
             <ul className={styles.vote}>
               <li>
-                <button onClick={() => dispatch(vote('XS'))}>XS</button>
+                <button onClick={() => sendVote('XS')}>XS</button>
               </li>
               <li>
-                <button onClick={() => dispatch(vote('S'))}>S</button>
+                <button onClick={() => sendVote('S')}>S</button>
               </li>
               <li>
-                <button onClick={() => dispatch(vote('M'))}>M</button>
+                <button onClick={() => sendVote('M')}>M</button>
               </li>
               <li>
-                <button onClick={() => dispatch(vote('L'))}>L</button>
+                <button onClick={() => sendVote('L')}>L</button>
               </li>
               <li>
-                <button onClick={() => dispatch(vote('XL'))}>XL</button>
+                <button onClick={() => sendVote('XL')}>XL</button>
               </li>
               <li>
-                <button onClick={() => dispatch(vote('XXL'))}>XXL</button>
+                <button onClick={() => sendVote('XXL')}>XXL</button>
               </li>
               <li>
-                <button onClick={() => dispatch(vote('?'))}>?</button>
+                <button onClick={() => sendVote('?')}>?</button>
               </li>
               <li>
-                <button onClick={() => dispatch(vote(null))}>Clear</button>
+                <button onClick={() => sendVote(null)}>Clear</button>
               </li>
             </ul>
           </div>
