@@ -43,7 +43,7 @@ API hosted at <https://planningpoker.games/api>
     cd frontend
     npm run build:prod
 
-## Publish
+## Deploy / Publish
 
 ### Frontend
 

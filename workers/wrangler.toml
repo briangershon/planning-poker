@@ -41,4 +41,4 @@ deleted_classes = ["Counter"]
 
 [[migrations]]
 tag = "v3"
-new_classes = ["GameDO"]
+renamed_classes = [{from = "Game", to = "GameDO" }]
