@@ -1,7 +1,7 @@
 import { Router } from 'itty-router';
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user';
 import { Octokit } from 'octokit';
-export { Game } from './game';
+export { GameDO } from './game-durable-object';
 import { AuthUser } from './auth-user';
 import { AuthSession } from './auth-session';
 import { serialize } from 'cookie';
@@ -165,7 +165,15 @@ router.delete(
     const { params } = request;
     const userId = request.user.id;
     const gameId = params.gameId;
+
+    // Ask Durable Object to remove all its data to delete itself
+    let id = env.GAME_DO.idFromName(gameId);
+    let obj = env.GAME_DO.get(id);
+    await obj.fetch(new Request('http://durable/deallocate'));
+
+    // delete game in KV
     await env.GAME.delete(`${userId}:${gameId}`);
+
     return new Response(JSON.stringify({ gameId }), {
       headers: {
         'content-type': 'application/json;charset=UTF-8'
@@ -174,25 +182,45 @@ router.delete(
   }
 );
 
-// TODO: Update vote for user (and add user to game) (PUT /api/games/:gameId)
-// TODO: Fetch game status (GET /api/games/:gameId)
+// Get game status (GET /api/games/:gameId)
+router.get(
+  '/api/games/:gameId',
+  withUser,
+  requireUser,
+  async (request, env) => {
+    const { params } = request;
+    const gameId = params.gameId;
 
-router.post(
-  '/api/games/:gameId/join',
+    let id = env.GAME_DO.idFromName(gameId);
+    let obj = env.GAME_DO.get(id);
+    let resp = await obj.fetch(new Request('http://durable/'));
+    let results = JSON.stringify(await resp.json(), null, 2);
+
+    return new Response(results, {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8'
+      }
+    });
+  }
+);
+
+// Update vote for user (and add user to game) (PUT /api/games/:gameId)
+router.put(
+  '/api/games/:gameId',
   withUser,
   requireUser,
   async (request, env) => {
     const { params, query } = request;
+    const gameId = params.gameId;
 
-    const body = await request.json();
-    const { name } = body;
-    if (!name) {
-      throw new Error('Missing Name field in request body.');
-    }
-
-    let id = env.GAME.idFromName('1234');
-    let obj = env.GAME.get(id);
-    let resp = await obj.fetch(new Request('http://durable/'));
+    let id = env.GAME_DO.idFromName(gameId);
+    let obj = env.GAME_DO.get(id);
+    let resp = await obj.fetch(
+      new Request(
+        `http://durable/update-story?` +
+          new URLSearchParams({ story: query.story })
+      )
+    );
     let results = JSON.stringify(await resp.json(), null, 2);
 
     return new Response(results, {

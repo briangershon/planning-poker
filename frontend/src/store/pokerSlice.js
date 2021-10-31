@@ -5,6 +5,7 @@ const initialState = {
   showCards: false,
   you: { name: 'You', value: null, id: new Date().getTime() },
   players: [],
+  story: ''
 };
 
 export const pokerSlice = createSlice({
@@ -33,11 +34,15 @@ export const pokerSlice = createSlice({
     vote: (state, action) => {
       state.you.value = action.payload;
     },
+    updateStory: (state, action) => {
+      console.log('updateStory called', action);
+      state.story = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addPlayer, createGame, endGame, showCards, hideCards, vote } =
+export const { addPlayer, createGame, endGame, showCards, hideCards, vote, updateStory } =
   pokerSlice.actions;
 
 export default pokerSlice.reducer;

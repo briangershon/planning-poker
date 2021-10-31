@@ -1,5 +1,5 @@
-import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useHistory, useParams } from 'react-router-dom';
 const { API_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
 
@@ -13,6 +13,7 @@ import {
   addPlayer,
   endGame,
   vote,
+  updateStory,
 } from '../store/pokerSlice';
 
 function PlayGame() {
@@ -24,25 +25,55 @@ function PlayGame() {
 
   let history = useHistory();
 
-  // if (!game.gameId) {
-  //   history.push('/');
-  // }
+  useEffect(() => {
+    fetch(`${API_URL}/games/${gameId}`, {
+      method: 'GET',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data !== null) {
+          dispatch(updateStory(data.story));
+        }
+      })
+      .catch((e) => {
+        console.log('server error', e);
+      });
+  }, []);
 
   async function deleteCurrentGame() {
     const response = await fetch(`${API_URL}/games/${gameId}`, {
       method: 'DELETE',
     });
-    const data = await response.json();
     history.push(`/`);
     dispatch(deleteGameId(gameId));
   }
+
+  async function sendStoryUpdate(event) {
+    const newStory = event.target.value;
+    const response = await fetch(
+      `${API_URL}/games/${gameId}?` + new URLSearchParams({ story: newStory }),
+      {
+        method: 'PUT',
+      }
+    );
+    dispatch(updateStory(newStory));
+  }
+
+  const gameInviteUrl = `/games/${gameId}`;
 
   return (
     <div>
       {!isLoggedIn && <div>Please login to participate in game.</div>}
       {isLoggedIn && (
         <div>
-          Game ID is {gameId}.
+          <div>
+            Share this <Link to={gameInviteUrl}>URL</Link> to invite others to
+            the game.
+          </div>
+          <div>
+            Story: <strong>{game.story}</strong> (update:{' '}
+            <input value={game.story} onChange={sendStoryUpdate} />)
+          </div>
           <Players
             you={game.you}
             players={game.players}
