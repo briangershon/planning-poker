@@ -16,11 +16,11 @@ function Players({ you, players, showCards }) {
         </li>
         {players.map((p) => {
           return (
-            <li className={styles.li}>
+            <li key={p.name} className={styles.li}>
               {showCards ? (
                 <CardVisible
                   name={p.name}
-                  value={p.value}
+                  value={p.vote}
                   cardState="visible"
                 />
               ) : (

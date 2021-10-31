@@ -5,22 +5,23 @@ const initialState = {
   showCards: false,
   you: { name: 'You', value: null, id: new Date().getTime() },
   players: [],
-  story: ''
+  story: '',
 };
 
 export const pokerSlice = createSlice({
   name: 'poker',
   initialState,
   reducers: {
-    addPlayer: (state, action) => {
-      state.players.push({
-        id: new Date().getTime(),
-        name: action.payload.name,
-        value: action.payload.value,
-      });
-    },
-    createGame: (state) => {
-      state.gameId = 'xxx';
+    updatePlayers: (state, action) => {
+      // avoid infinite loops by updating existing array
+      // clear array
+      for (let j = 0; j < state.players.length; j++) {
+        state.players.pop();
+      }
+      // then append to array
+      for (let i = 0; i < action.payload.length; i++) {
+        state.players.push(action.payload[i]);
+      }
     },
     endGame: () => {
       return initialState;
@@ -35,14 +36,19 @@ export const pokerSlice = createSlice({
       state.you.value = action.payload;
     },
     updateStory: (state, action) => {
-      console.log('updateStory called', action);
       state.story = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addPlayer, createGame, endGame, showCards, hideCards, vote, updateStory } =
-  pokerSlice.actions;
+export const {
+  endGame,
+  showCards,
+  hideCards,
+  vote,
+  updateStory,
+  updatePlayers,
+} = pokerSlice.actions;
 
 export default pokerSlice.reducer;

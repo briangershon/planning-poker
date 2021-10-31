@@ -18,14 +18,12 @@ export const userSlice = createSlice({
 
       // avoid infinite loop when using `state.gameIds = action.payload.gameIds;`
       // instead, clear array
-      for (let j = 0; j < state.gameIds; j++) {
+      for (let j = 0; j < state.gameIds.length; j++) {
         state.gameIds.pop();
       }
       // then append to array
       for (let i = 0; i < action.payload.gameIds.length; i++) {
-        if (!state.gameIds.includes(action.payload.gameIds[i])) {
-          state.gameIds.push(action.payload.gameIds[i]);
-        }
+        state.gameIds.push(action.payload.gameIds[i]);
       }
     },
     addGameId: (state, action) => {

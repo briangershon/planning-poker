@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { createGame } from '../store/pokerSlice';
 import { addGameId } from '../store/userSlice';
 const { API_URL } = import.meta.env;
 
@@ -13,7 +12,6 @@ function HomePage() {
   const history = useHistory();
 
   async function newGame() {
-    dispatch(createGame());
     const response = await fetch(`${API_URL}/games`, {
       method: 'POST',
     });
@@ -26,17 +24,19 @@ function HomePage() {
     <div>
       {!isLoggedIn && <div>Please login to play.</div>}
       {!userGameIds.length && isLoggedIn && <div>No games in progress.</div>}
-      {userGameIds && isLoggedIn && (
-        <ul>
-          {userGameIds.map((gameId) => {
-            return (
-              <li key={gameId}>
-                <Link to={`/games/${gameId}`}>Play game in progress</Link> (
-                {gameId})
-              </li>
-            );
-          })}
-        </ul>
+      {userGameIds.length > 0 && isLoggedIn && (
+        <div>
+          <div>Your Games</div>
+          <ul>
+            {userGameIds.map((gameId) => {
+              return (
+                <li key={gameId}>
+                  <Link to={`/games/${gameId}`}>Play game in progress</Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
       {isLoggedIn && <button onClick={newGame}>New Game</button>}
     </div>

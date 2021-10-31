@@ -10,10 +10,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   showCards,
   hideCards,
-  addPlayer,
   endGame,
   vote,
   updateStory,
+  updatePlayers
 } from '../store/pokerSlice';
 
 function PlayGame() {
@@ -33,6 +33,7 @@ function PlayGame() {
       .then((data) => {
         if (data !== null) {
           dispatch(updateStory(data.story));
+          dispatch(updatePlayers(data.votes));
         }
       })
       .catch((e) => {
@@ -135,18 +136,6 @@ function PlayGame() {
           </div>
           <hr />
           <div>
-            <button
-              onClick={() =>
-                dispatch(
-                  addPlayer({
-                    name: 'New',
-                    value: null,
-                  })
-                )
-              }
-            >
-              Add Player
-            </button>
             <button onClick={deleteCurrentGame}>Delete Game</button>
           </div>
         </div>
