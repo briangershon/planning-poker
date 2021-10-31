@@ -92,10 +92,24 @@ export class GameDO {
         const rawVotes = Object.fromEntries(voteList);
 
         // Strip out current user, just sent votes back from other players
+        let you = {
+          vote: null
+        };
         let votes = [];
+
         const userKeys = Object.keys(rawVotes);
         for (let i = 0; i < userKeys.length; i++) {
           let key = userKeys[i];
+
+          // update "you"
+          if (key === `VOTE|${id}`) {
+            const userInfo = await this.env.USER.get(id, {
+              type: 'json'
+            });
+            you.vote = rawVotes[key];
+          }
+
+          // update other players
           if (key !== `VOTE|${id}`) {
             // convert IDs to names
             const playerId = key.slice(-(key.length - 'VOTE|'.length));
@@ -109,7 +123,8 @@ export class GameDO {
         return new Response(
           JSON.stringify({
             story: this.story,
-            votes: votes
+            votes: votes,
+            you
           }),
           {
             headers: {

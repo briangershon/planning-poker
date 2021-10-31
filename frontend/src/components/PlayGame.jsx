@@ -34,6 +34,7 @@ function PlayGame() {
         if (data !== null) {
           dispatch(updateStory(data.story));
           dispatch(updatePlayers(data.votes));
+          dispatch(vote(data.you.vote));
         }
       })
       .catch((e) => {
