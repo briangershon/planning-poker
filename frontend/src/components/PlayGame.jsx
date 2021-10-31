@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 const { API_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
@@ -13,7 +13,7 @@ import {
   endGame,
   vote,
   updateStory,
-  updatePlayers
+  updatePlayers,
 } from '../store/pokerSlice';
 
 function PlayGame() {
@@ -21,11 +21,13 @@ function PlayGame() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
+  const [isPolling, setIsPolling] = useState(true);
+
   let { gameId } = useParams();
 
   let history = useHistory();
 
-  useEffect(() => {
+  function refresh() {
     fetch(`${API_URL}/games/${gameId}`, {
       method: 'GET',
     })
@@ -40,7 +42,36 @@ function PlayGame() {
       .catch((e) => {
         console.log('server error', e);
       });
+  }
+
+  // refresh votes when page first loads
+  useEffect(() => {
+    refresh();
   }, []);
+
+  // auto-refresh votes on an interval
+  useEffect(() => {
+    if (isPolling) {
+      const interval = setInterval(() => {
+        refresh();
+      }, 5000);
+      return () => {
+        return clearInterval(interval);
+      };
+    }
+  }, [isPolling]);
+
+  // turn off auto-refresh after certain time period
+  useEffect(() => {
+    if (isPolling) {
+      const timer = setTimeout(() => {
+        setIsPolling(false);
+      }, 60000);
+      return () => {
+        return clearTimeout(timer);
+      };
+    }
+  }, [isPolling]);
 
   async function deleteCurrentGame() {
     const response = await fetch(`${API_URL}/games/${gameId}`, {
@@ -79,12 +110,23 @@ function PlayGame() {
       {isLoggedIn && (
         <div>
           <div>
-            Share this <Link to={gameInviteUrl}>URL</Link> to invite others to
-            the game.
+            Invite others by sending them this <Link to={gameInviteUrl}>link</Link>.
           </div>
           <div>
             Story: <strong>{game.story}</strong> (update:{' '}
             <input value={game.story} onChange={sendStoryUpdate} />)
+          </div>
+          <div>
+            Auto refresh: {isPolling && <strong>on</strong>}
+            {!isPolling && (
+              <button
+                onClick={() => {
+                  setIsPolling(true);
+                }}
+              >
+                Start
+              </button>
+            )}
           </div>
           <Players
             you={game.you}
@@ -120,6 +162,7 @@ function PlayGame() {
               </li>
             </ul>
           </div>
+
           {game.showCards ? (
             <button onClick={() => dispatch(hideCards())}>Hide Cards</button>
           ) : (
