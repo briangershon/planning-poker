@@ -55,7 +55,7 @@ function App() {
             {!user.name && (
               <div>
                 <a href="/api/login/github" target="_self">
-                  Login
+                  Github Login
                 </a>
               </div>
             )}

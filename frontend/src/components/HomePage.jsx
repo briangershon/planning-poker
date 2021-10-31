@@ -22,7 +22,15 @@ function HomePage() {
 
   return (
     <div>
-      {!isLoggedIn && <div>Please login to play.</div>}
+      {!isLoggedIn && (
+        <div>
+          <h1>Welcome to Planning Poker!</h1>
+          <div>
+            Please <a href="/api/login/github">login</a> to play.
+            Visit <Link to="/about">about</Link> for more info.
+          </div>
+        </div>
+      )}
       {!userGameIds.length && isLoggedIn && <div>No games in progress.</div>}
       {userGameIds.length > 0 && isLoggedIn && (
         <div>

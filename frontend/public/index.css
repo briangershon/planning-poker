@@ -13,7 +13,7 @@ html {
 
 body {
   height: 100%;
-  font-size: 2.25rem;
+  font-size: 2rem;
   margin: 0;
   padding: 0;
 }
@@ -25,5 +25,6 @@ body {
 }
 
 p {
-  margin: 2rem;
+  margin: 2rem 0;
+  max-width: 600px;
 }
