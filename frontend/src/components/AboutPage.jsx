@@ -20,8 +20,8 @@ function AboutPage() {
       </p>
 
       <p>
-        For this project, I used Cloudflare Pages, Workers, Durable Objects and
-        KV store.
+        This project uses Cloudflare Workers, Workers KV, Durable Objects, and
+        Cloudflare Pages. Also React, Redux Toolkit, TypeScript and Snowpack.
       </p>
 
       <p>

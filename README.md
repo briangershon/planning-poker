@@ -8,7 +8,7 @@ The game is an entry in the [Cloudflare Developer Challenge](https://challenge.d
 
 The Cloudflare Developer Challenge is an event where developers are challenged to build an application using at least two of the products from the Cloudflare developer platform.
 
-This project used Cloudflare Pages, Workers, Durable Objects and KV store.
+This project uses Cloudflare Workers, Workers KV, Durable Objects, and Cloudflare Pages. Also React, Redux Toolkit, TypeScript and Snowpack.
 
 This was a good fit for Cloudflare `Durable Objects` since each game manages state for multiple players.
 
