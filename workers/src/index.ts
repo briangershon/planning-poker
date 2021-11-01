@@ -36,8 +36,26 @@ const requireUser = async request => {
 };
 
 router.get('/api/login/github', async (request, env) => {
+  if (request.query.redirect) {
+    const callback =
+      `${env.GITHUB_CLIENT_SUCCESS_URL}/api/login/github/callback?` +
+      new URLSearchParams({ redirect: request.query.redirect });
+
+    return Response.redirect(
+      `https://github.com/login/oauth/authorize?` +
+        new URLSearchParams({
+          client_id: env.GITHUB_CLIENT_ID,
+          redirect_uri: callback
+        }),
+      302
+    );
+  }
+
   return Response.redirect(
-    `https://github.com/login/oauth/authorize?client_id=${env.GITHUB_CLIENT_ID}`,
+    `https://github.com/login/oauth/authorize?` +
+      new URLSearchParams({
+        client_id: env.GITHUB_CLIENT_ID
+      }),
     302
   );
 });
@@ -82,6 +100,16 @@ router.get('/api/login/github/callback', async (request, env) => {
     maxAge: twoWeeks,
     path: '/'
   });
+
+  if (request.query.redirect) {
+    return new Response('', {
+      status: 302,
+      headers: {
+        Location: request.query.redirect,
+        'Set-Cookie': cookie
+      }
+    });
+  }
 
   return new Response('', {
     status: 302,
