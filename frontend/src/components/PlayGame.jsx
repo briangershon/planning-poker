@@ -65,7 +65,7 @@ function PlayGame() {
     if (isPolling) {
       const timer = setTimeout(() => {
         setIsPolling(false);
-      }, 60000);
+      }, 120000);
       return () => {
         return clearTimeout(timer);
       };
@@ -174,15 +174,24 @@ function PlayGame() {
           />
 
           <div>
-            Auto refresh: {isPolling && <strong>on</strong>}
+            {isPolling && (
+              <div>
+                Auto refresh: <strong>on</strong>. Updates every 5 seconds over
+                120 seconds.
+              </div>
+            )}
             {!isPolling && (
-              <button
-                onClick={() => {
-                  setIsPolling(true);
-                }}
-              >
-                Start
-              </button>
+              <div>
+                <strong>Auto refresh is off so data is not updating.</strong>{' '}
+                Press start button to continue.{' '}
+                <button
+                  onClick={() => {
+                    setIsPolling(true);
+                  }}
+                >
+                  Start
+                </button>
+              </div>
             )}
           </div>
 

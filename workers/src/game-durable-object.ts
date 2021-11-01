@@ -62,18 +62,16 @@ export class GameDO {
     let url = new URL(request.url);
 
     switch (url.pathname) {
-      case '/update-story':
+      case '/update':
         let newStory = url.searchParams.get('story');
-        if (newStory === 'undefined') newStory = null;
-        if (newStory) {
+        if (newStory !== 'undefined') {
           await this.state.storage.put('story', newStory);
           this.story = newStory;
         }
 
         // update vote
         let newVote = url.searchParams.get('vote');
-        if (newVote === 'undefined') newVote = null;
-        if (newVote) {
+        if (newVote !== 'undefined') {
           if (!['XS', 'S', 'M', 'L', 'XL', 'XXL', '?'].includes(newVote)) {
             newVote = null;
           }

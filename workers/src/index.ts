@@ -181,6 +181,18 @@ router.post('/api/games', withUser, requireUser, async (request, env) => {
     })
   );
 
+  // vote with null so that user shows up in game
+  const vote = 'hello';
+  let id = env.GAME_DO.idFromName(gameId);
+  let obj = env.GAME_DO.get(id);
+  let resp = await obj.fetch(
+    new Request(
+      `http://durable/update?` +
+        new URLSearchParams({ vote, user: JSON.stringify(request.user) })
+    )
+  );
+
+
   return new Response(JSON.stringify({ gameId, createdMillis }), {
     headers: {
       'content-type': 'application/json;charset=UTF-8'
@@ -254,7 +266,7 @@ router.put(
     let obj = env.GAME_DO.get(id);
     let resp = await obj.fetch(
       new Request(
-        `http://durable/update-story?` +
+        `http://durable/update?` +
           new URLSearchParams({ story, vote, user: JSON.stringify(user) })
       )
     );
