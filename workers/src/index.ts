@@ -172,6 +172,22 @@ router.get('/api/me', withUser, async (request, env) => {
 // Create game and persist ID
 router.post('/api/games', withUser, requireUser, async (request, env) => {
   const userId = request.user.id;
+
+  // Limit number of games a user can create to 5
+  const gamesForThisUser = await env.GAME.list({ prefix: `${userId}:` });
+  if (gamesForThisUser.keys.length >= 5) {
+    return new Response(
+      JSON.stringify({ error: 'user can only create 5 games' }),
+      {
+        status: 429,
+        headers: {
+          'content-type': 'application/json;charset=UTF-8'
+        }
+      }
+    );
+  }
+
+  // continue and create game
   const gameId = uuid();
   const createdMillis = new Date().getTime();
   await env.GAME.put(
@@ -191,7 +207,6 @@ router.post('/api/games', withUser, requireUser, async (request, env) => {
         new URLSearchParams({ vote, user: JSON.stringify(request.user) })
     )
   );
-
 
   return new Response(JSON.stringify({ gameId, createdMillis }), {
     headers: {

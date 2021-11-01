@@ -16,8 +16,14 @@ function HomePage() {
       method: 'POST',
     });
     const data = await response.json();
-    dispatch(addGameId({ gameId: data.gameId }));
-    history.push(`/games/${data.gameId}`);
+    if (data.error) {
+      alert(
+        `Unable to create additional games, due to ${data.error}. You can delete existing games by viewing then, then choosing Delete button at the bottom.`
+      );
+    } else {
+      dispatch(addGameId({ gameId: data.gameId }));
+      history.push(`/games/${data.gameId}`);
+    }
   }
 
   return (
@@ -26,8 +32,8 @@ function HomePage() {
         <div>
           <h1>Welcome to Planning Poker!</h1>
           <div>
-            Please <a href="/api/login/github">login</a> to play.
-            Visit <Link to="/about">about</Link> for more info.
+            Please <a href="/api/login/github">login</a> to play. Visit{' '}
+            <Link to="/about">about</Link> for more info.
           </div>
         </div>
       )}
