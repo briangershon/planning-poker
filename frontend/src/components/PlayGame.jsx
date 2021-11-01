@@ -21,6 +21,8 @@ function PlayGame() {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
   const [isPolling, setIsPolling] = useState(true);
+  const [storyEditBuffer, setStoryEditBuffer] = useState('');
+  const [isUpdatingStory, setUpdatingStory] = useState(false);
 
   let { gameId } = useParams();
 
@@ -82,16 +84,23 @@ function PlayGame() {
     }
   }
 
-  async function sendStoryUpdate(event) {
+  async function updateStoryBuffer(event) {
     const newStory = event.target.value;
+    setStoryEditBuffer(newStory);
+  }
+
+  async function sendStoryUpdate() {
+    setUpdatingStory(true);
     const response = await fetch(
       `${SITE_URL}/api/games/${gameId}?` +
-        new URLSearchParams({ story: newStory }),
+        new URLSearchParams({ story: storyEditBuffer }),
       {
         method: 'PUT',
       }
     );
-    dispatch(updateStory(newStory));
+    dispatch(updateStory(storyEditBuffer));
+    setStoryEditBuffer('');
+    setUpdatingStory(false);
   }
 
   async function sendVote(voteCasted) {
@@ -129,11 +138,21 @@ function PlayGame() {
 
           <div className={styles.story}>
             <p>What story are you estimating?</p>
-            Story: <strong>{game.story}</strong>
+
+            {game.story ? (
+              <div>
+                Story: <strong>{game.story}</strong>
+              </div>
+            ) : (
+              <strong>Please add a story.</strong>
+            )}
           </div>
           <div>
             Update story:{' '}
-            <input value={game.story} onChange={sendStoryUpdate} />
+            <input disabled={isUpdatingStory} value={storyEditBuffer} onChange={updateStoryBuffer} />{' '}
+            <button disabled={isUpdatingStory} onClick={sendStoryUpdate}>
+              Update
+            </button>
           </div>
 
           <h2>3. Cast your vote</h2>
