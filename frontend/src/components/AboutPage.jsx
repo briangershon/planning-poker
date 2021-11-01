@@ -30,10 +30,11 @@ function AboutPage() {
       </p>
 
       <p>
-        The live application can be found at{' '}
-        <a href="https://planningpoker.games">planningpoker.games</a> and code
-        is available at{' '}
-        <a href="https://github.com/briangershon/planning-poker">
+        The code is available at{' '}
+        <a
+          href="https://github.com/briangershon/planning-poker"
+          target="_blank"
+        >
           github.com/briangershon/planning-poker
         </a>
         .

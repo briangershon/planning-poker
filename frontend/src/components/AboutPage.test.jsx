@@ -8,6 +8,6 @@ afterEach(cleanup);
 describe('This will test HomePage', () => {
   it('renders', () => {
     const { getByText } = render(<AboutPage />);
-    expect(document.body.contains(getByText('About')));
+    expect(document.body.contains(getByText('About Planning Poker')));
   });
 });
