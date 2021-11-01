@@ -25,8 +25,8 @@ function AboutPage() {
       </p>
 
       <p>
-        This was a good fit for Cloudflare Durable Objects in that each game
-        manages game state and state for multiple players.
+        This was a good fit for Cloudflare <strong>Durable Objects</strong>{' '}
+        since each game manages state for multiple players.
       </p>
 
       <p>

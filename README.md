@@ -10,7 +10,7 @@ The Cloudflare Developer Challenge is an event where developers are challenged t
 
 This project used Cloudflare Pages, Workers, Durable Objects and KV store.
 
-This was a good fit for Cloudflare Durable Objects in that each game manages game state and state for multiple players.
+This was a good fit for Cloudflare `Durable Objects` since each game manages state for multiple players.
 
 ## Screenshot
 
@@ -53,18 +53,19 @@ API hosted at <https://planningpoker.games/api>
     cd frontend
     npm test
 
-### Package project up for PRODUCTION
-
-    cd frontend
-    npm run build:prod
-
 ## Deploy / Publish
 
 ### Frontend
 
-    # push to this github repo and Cloudflare pages runs `npm run build:prod`
+Setup Cloudflare Pages for PRODUCTION:
 
-## Backend / Cloudflare worker
+* Build command: `npm run build:prod`
+* Build output directory: `/build`
+* Root directory: `/frontend`
+
+To deploy, `push` commits to this github repo.
+
+### Backend / Cloudflare worker
 
     # setup Github oAuth secrets for production via wrangler
     wrangler secret put GITHUB_CLIENT_ID
@@ -75,10 +76,6 @@ API hosted at <https://planningpoker.games/api>
     nvm use
     npm i @cloudflare/wrangler -g
     wrangler publish
-
-## Sample curl requests
-
-    curl -i --data '{"name": "Brian"}' http://localhost:8787/games/123/join
 
 ## What is the game architecture?
 
