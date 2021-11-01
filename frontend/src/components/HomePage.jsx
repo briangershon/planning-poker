@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { addGameId } from '../store/userSlice';
-const { API_URL } = import.meta.env;
+const { SITE_URL } = import.meta.env;
 
 function HomePage() {
   const userGameIds = useSelector((state) => state.user.gameIds);
@@ -12,7 +12,7 @@ function HomePage() {
   const history = useHistory();
 
   async function newGame() {
-    const response = await fetch(`${API_URL}/games`, {
+    const response = await fetch(`${SITE_URL}/api/games`, {
       method: 'POST',
     });
     const data = await response.json();

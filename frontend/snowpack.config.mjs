@@ -5,7 +5,7 @@ console.log('NODE_ENV', process.env.NODE_ENV);
 
 export default {
   env: {
-    API_URL: 'http://localhost:8080/api',
+    SITE_URL: 'http://localhost:8080',
   },
   mount: {
     public: '/',

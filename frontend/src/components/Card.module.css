@@ -13,6 +13,14 @@
   font-size: 1.5rem;
 }
 
+.placeholder {
+  background-color: #e5e5f7;
+  opacity: 0.8;
+  border: 2px dotted black;
+  font-size: 1.1rem;
+  padding: 0.4rem;
+}
+
 .hidden {
   /* "Isometric" pattern from https://www.magicpattern.design/tools/css-backgrounds */
   background-color: #e5e5f7;

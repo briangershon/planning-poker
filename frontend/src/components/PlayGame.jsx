@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
-const { API_URL } = import.meta.env;
+const { SITE_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
 
 import Players from './Players';
@@ -27,7 +27,7 @@ function PlayGame() {
   let history = useHistory();
 
   function refresh() {
-    fetch(`${API_URL}/games/${gameId}`, {
+    fetch(`${SITE_URL}/api/games/${gameId}`, {
       method: 'GET',
     })
       .then((response) => response.json())
@@ -73,17 +73,20 @@ function PlayGame() {
   }, [isPolling]);
 
   async function deleteCurrentGame() {
-    const response = await fetch(`${API_URL}/games/${gameId}`, {
-      method: 'DELETE',
-    });
-    history.push(`/`);
-    dispatch(deleteGameId(gameId));
+    if (confirm('Are you sure you want to delete?')) {
+      const response = await fetch(`${SITE_URL}/api/games/${gameId}`, {
+        method: 'DELETE',
+      });
+      history.push(`/`);
+      dispatch(deleteGameId(gameId));
+    }
   }
 
   async function sendStoryUpdate(event) {
     const newStory = event.target.value;
     const response = await fetch(
-      `${API_URL}/games/${gameId}?` + new URLSearchParams({ story: newStory }),
+      `${SITE_URL}/api/games/${gameId}?` +
+        new URLSearchParams({ story: newStory }),
       {
         method: 'PUT',
       }
@@ -93,7 +96,8 @@ function PlayGame() {
 
   async function sendVote(voteCasted) {
     const response = await fetch(
-      `${API_URL}/games/${gameId}?` + new URLSearchParams({ vote: voteCasted }),
+      `${SITE_URL}/api/games/${gameId}?` +
+        new URLSearchParams({ vote: voteCasted }),
       {
         method: 'PUT',
       }
@@ -101,40 +105,33 @@ function PlayGame() {
     dispatch(vote(voteCasted));
   }
 
-  const gameInviteUrl = `/games/${gameId}`;
+  const gameInviteUrl = `${SITE_URL}/games/${gameId}`;
 
   return (
     <div>
       {!isLoggedIn && <div>Please login to participate in game.</div>}
       {isLoggedIn && (
         <div>
-          <div>
-            Invite others by sending them this{' '}
-            <Link to={gameInviteUrl}>link</Link>.
+          <h2>1. Invite</h2>
+          <div className={styles.inviteLink}>
+            Invite others by sending them to:{' '}
+            <Link to={gameInviteUrl}>{gameInviteUrl}</Link>
+          </div>
+
+          <h2>2. Story</h2>
+
+          <div className={styles.story}>
+            <p>What story are you estimating?</p>
+            Story: <strong>{game.story}</strong>
           </div>
           <div>
-            Story: <strong>{game.story}</strong> (update:{' '}
-            <input value={game.story} onChange={sendStoryUpdate} />)
+            Update story:{' '}
+            <input value={game.story} onChange={sendStoryUpdate} />
           </div>
+
+          <h2>3. Cast your vote</h2>
           <div>
-            Auto refresh: {isPolling && <strong>on</strong>}
-            {!isPolling && (
-              <button
-                onClick={() => {
-                  setIsPolling(true);
-                }}
-              >
-                Start
-              </button>
-            )}
-          </div>
-          <Players
-            you={game.you}
-            players={game.players}
-            showCards={game.showCards}
-          />
-          <div>
-            <p>Choose your card:</p>
+            {/* <p>Vote here:</p> */}
             <ul className={styles.vote}>
               <li>
                 <button onClick={() => sendVote('XS')}>XS</button>
@@ -163,11 +160,33 @@ function PlayGame() {
             </ul>
           </div>
 
-          {game.showCards ? (
-            <button onClick={() => dispatch(hideCards())}>Hide Cards</button>
-          ) : (
-            <button onClick={() => dispatch(showCards())}>Show Cards</button>
-          )}
+          <Players
+            you={game.you}
+            players={game.players}
+            showCards={game.showCards}
+          />
+
+          <div>
+            Auto refresh: {isPolling && <strong>on</strong>}
+            {!isPolling && (
+              <button
+                onClick={() => {
+                  setIsPolling(true);
+                }}
+              >
+                Start
+              </button>
+            )}
+          </div>
+
+          {/* <div>
+            {game.showCards ? (
+              <button onClick={() => dispatch(hideCards())}>Hide Cards</button>
+            ) : (
+              <button onClick={() => dispatch(showCards())}>Show Cards</button>
+            )}
+          </div> */}
+
           <hr />
           <div>
             <button onClick={deleteCurrentGame}>Delete Game</button>

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { updateUser } from '../store/userSlice';
-const { API_URL } = import.meta.env;
+const { SITE_URL } = import.meta.env;
 
 import {
   BrowserRouter as Router,
@@ -22,7 +22,7 @@ function App() {
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    fetch(`${API_URL}/me`, {
+    fetch(`${SITE_URL}/api/me`, {
       method: 'GET',
     })
       .then((response) => response.json())

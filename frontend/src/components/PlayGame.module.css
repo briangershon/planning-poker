@@ -11,3 +11,12 @@
 .vote button {
   width: 50px;
 }
+
+.inviteLink a {
+  font-size: 1.5rem;
+  display: inline-block;
+}
+
+.story {
+  padding-bottom: 2rem;
+}
