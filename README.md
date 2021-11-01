@@ -1,15 +1,26 @@
 # planningpoker.games
 
+![Build Status](https://github.com/briangershon/planning-poker/workflows/Continuous%20Integration/badge.svg)
+
+## About
+
+The game is an entry in the [Cloudflare Developer Challenge](https://challenge.developers.cloudflare.com).
+
+The Cloudflare Developer Challenge is an event where developers are challenged to build an application using at least two of the products from the Cloudflare developer platform.
+
+This project used Cloudflare Pages, Workers, Durable Objects and KV store.
+
+This was a good fit for Cloudflare Durable Objects in that each game manages game state and state for multiple players.
+
+## Where is site hosted?
+
 Live website hosted at <https://planningpoker.games/>
 
 API hosted at <https://planningpoker.games/api>
 
-![Build Status](https://github.com/briangershon/planning-poker/workflows/Continuous%20Integration/badge.svg)
-
 ## Run application locally
 
     # setup nvm to manage Node.js versions
-
 
     # in on terminal window run the backend
     cd workers
