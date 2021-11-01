@@ -12,6 +12,10 @@ This project used Cloudflare Pages, Workers, Durable Objects and KV store.
 
 This was a good fit for Cloudflare Durable Objects in that each game manages game state and state for multiple players.
 
+## Screenshot
+
+![Planning Poker screenshot](planning-poker-screenshot.png?raw=true)
+
 ## Where is site hosted?
 
 Live website hosted at <https://planningpoker.games/>
