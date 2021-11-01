@@ -93,6 +93,7 @@ Workflow:
 - Visit any valid game route to participate in game. (Participant needs to be logged in)
 - Users can cast votes, change story sentence, flip cards
 - Poll for updates
+- Only creator of game can delete it, albeit `delete` button shows up for all users.
 
 ## FAQs
 

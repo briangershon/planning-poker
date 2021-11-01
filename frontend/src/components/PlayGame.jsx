@@ -110,7 +110,13 @@ function PlayGame() {
 
   return (
     <div>
-      {!isLoggedIn && <div>Click <a href={loginWithRedirect}>here to login</a> and continue to the plannnig poker game.</div>}
+      {!isLoggedIn && (
+        <div>
+          Click <a href={loginWithRedirect}>here to login</a> and continue to
+          the plannnig poker game.
+        </div>
+      )}
+
       {isLoggedIn && (
         <div>
           <h2>1. Invite</h2>
