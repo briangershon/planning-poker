@@ -114,6 +114,7 @@ function PlayGame() {
     dispatch(vote(voteCasted));
   }
 
+  const relativeGameInviteUrl = `/games/${gameId}`;
   const gameInviteUrl = `${SITE_URL}/games/${gameId}`;
   const loginWithRedirect = `/api/login/github?redirect=${gameInviteUrl}`;
 
@@ -131,7 +132,7 @@ function PlayGame() {
           <h2>1. Invite</h2>
           <div className={styles.inviteLink}>
             Invite others by sending them to:{' '}
-            <Link to={gameInviteUrl}>{gameInviteUrl}</Link>
+            <Link to={relativeGameInviteUrl}>{gameInviteUrl}</Link>
           </div>
 
           <h2>2. Story</h2>
@@ -149,7 +150,11 @@ function PlayGame() {
           </div>
           <div>
             Update story:{' '}
-            <input disabled={isUpdatingStory} value={storyEditBuffer} onChange={updateStoryBuffer} />{' '}
+            <input
+              disabled={isUpdatingStory}
+              value={storyEditBuffer}
+              onChange={updateStoryBuffer}
+            />{' '}
             <button disabled={isUpdatingStory} onClick={sendStoryUpdate}>
               Update
             </button>
@@ -193,6 +198,14 @@ function PlayGame() {
           />
 
           <div>
+            {game.showCards ? (
+              <button onClick={() => dispatch(hideCards())}>Hide Cards</button>
+            ) : (
+              <button onClick={() => dispatch(showCards())}>Show Cards</button>
+            )}
+          </div>
+
+          <div>
             {isPolling && (
               <div>
                 Auto refresh: <strong>on</strong>. Updates every 5 seconds over
@@ -213,14 +226,6 @@ function PlayGame() {
               </div>
             )}
           </div>
-
-          {/* <div>
-            {game.showCards ? (
-              <button onClick={() => dispatch(hideCards())}>Hide Cards</button>
-            ) : (
-              <button onClick={() => dispatch(showCards())}>Show Cards</button>
-            )}
-          </div> */}
 
           <hr />
           <div>

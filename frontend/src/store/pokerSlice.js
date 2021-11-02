@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  showCards: true,
+  showCards: false,
   you: { name: 'You', vote: null },
   players: [],
   story: '',
