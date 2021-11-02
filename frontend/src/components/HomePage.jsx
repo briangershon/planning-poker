@@ -31,17 +31,42 @@ function HomePage() {
       {!isLoggedIn && (
         <div>
           <h1>Welcome to Planning Poker!</h1>
-          <div>
+          <p>
             Please <a href="/api/login/github">login</a> to play. Visit{' '}
             <Link to="/about">about</Link> for more info.
-          </div>
+          </p>
+          <p>
+            You can also try a{' '}
+            <a href="https://planningpoker.games/games/715ffdd8-6a65-42f6-92ff-89f37933acc5">
+              Demo Game
+            </a>{' '}
+            if you don't have a second Github account to test playing a game with
+            multiple players.
+          </p>
         </div>
       )}
-      {!userGameIds.length && isLoggedIn && <div>No games in progress.</div>}
+      {!userGameIds.length && isLoggedIn && (
+        <p>
+          You can also try a{' '}
+          <a href="https://planningpoker.games/games/715ffdd8-6a65-42f6-92ff-89f37933acc5">
+            Demo Game
+          </a>{' '}
+          if you don't have a second Github account to test playing a game with
+          multiple players.
+        </p>
+      )}
       {userGameIds.length > 0 && isLoggedIn && (
         <div>
           <div>Your Games</div>
           <ul>
+            <li>
+              You can also try a{' '}
+              <a href="https://planningpoker.games/games/715ffdd8-6a65-42f6-92ff-89f37933acc5">
+                Demo Game
+              </a>{' '}
+              if you don't have a second Github account to test playing a game
+              with multiple players.
+            </li>
             {userGameIds.map((gameId) => {
               return (
                 <li key={gameId}>

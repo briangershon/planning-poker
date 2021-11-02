@@ -44,7 +44,7 @@ function AboutPage() {
       <p>
         When you login via Github, this app only has permissions to public
         information from your Github profile, including your name, avatar URL,
-        Github user name and token.
+        and Github user name.
       </p>
     </div>
   );
