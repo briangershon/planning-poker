@@ -77,6 +77,14 @@ function App() {
                   About
                 </NavLink>
               </li>
+              <li className={styles.submitFeedback}>
+                <a
+                  href="https://github.com/briangershon/planning-poker/issues/new"
+                  target="_blank"
+                >
+                  Send feedback
+                </a>
+              </li>
             </ul>
           </nav>
         </div>

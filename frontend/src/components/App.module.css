@@ -78,6 +78,11 @@
   /* font-weight: bold; */
 }
 
+.submitFeedback {
+  padding-top: 20px;
+  font-size: 1.5rem;
+}
+
 @media only screen and (max-width: 650px) {
   .app {
     flex-direction: column;
