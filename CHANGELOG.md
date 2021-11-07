@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--
+- Websocket support for updating story text and player voting.
 
 ## [1.0.1] - 2021-11-03
 

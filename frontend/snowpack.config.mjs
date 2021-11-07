@@ -6,6 +6,7 @@ console.log('NODE_ENV', process.env.NODE_ENV);
 export default {
   env: {
     SITE_URL: 'http://localhost:8080',
+    WEBSOCKET_URL: 'ws://localhost:8080/api/ws/',
   },
   mount: {
     public: '/',
@@ -13,11 +14,30 @@ export default {
   },
   routes: [
     {
+      src: '/api/ws/',
+      upgrade: (req, socket, head) => {
+        const defaultWSHandler = (err, req, socket, head) => {
+          if (err) {
+            console.error('proxy error', err);
+            socket.destroy();
+          }
+        };
+
+        proxy.ws(
+          req,
+          socket,
+          head,
+          {
+            hostname: 'localhost',
+            port: 8787,
+          },
+          defaultWSHandler
+        );
+      },
+    },
+    {
       src: '/api/.*',
       dest: (req, res) => {
-        // remove /api prefix (optional)
-        // req.url = req.url.replace(/^/api//, '/');
-
         return proxy.web(req, res, {
           hostname: 'localhost',
           port: 8787,

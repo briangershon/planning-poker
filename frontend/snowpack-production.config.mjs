@@ -5,6 +5,7 @@ console.log('NODE_ENV', process.env.NODE_ENV);
 export default {
   env: {
     SITE_URL: 'https://planningpoker.games',
+    WEBSOCKET_URL: 'wss://planningpoker.games/api/ws/',
   },
   mount: {
     public: '/',
