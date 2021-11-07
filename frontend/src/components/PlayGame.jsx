@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
-const { SITE_URL } = import.meta.env;
+const { SITE_URL, WEBSOCKET_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
 
 import Players from './Players';
@@ -27,6 +27,32 @@ function PlayGame() {
   let { gameId } = useParams();
 
   let history = useHistory();
+
+  function handleWebsocket() {
+    const websocket = new WebSocket(WEBSOCKET_URL);
+    try {
+      if (!websocket) {
+        throw new Error("Websocket: Server didn't accept ws");
+      }
+      websocket.addEventListener('open', () => {
+        websocket.send('YOYOYO');
+      });
+
+      websocket.addEventListener('message', (event) => {
+        console.log('Websocket: Message received from server:', event.data);
+      });
+
+      websocket.addEventListener('close', () => {
+        console.log('Websocket: Closed websocket');
+      });
+    } catch (e) {
+      console.log('WEBSOCKET ERROR', e);
+    }
+  }
+
+  useEffect(() => {
+    handleWebsocket();
+  }, []);
 
   function refresh() {
     fetch(`${SITE_URL}/api/games/${gameId}`, {
