@@ -16,11 +16,17 @@ This was a good fit for Cloudflare `Durable Objects` since each game manages sta
 
 ![Planning Poker screenshot](planning-poker-screenshot.png?raw=true)
 
-## Where is site hosted?
+## Where is the site?
 
 Live website hosted at <https://planningpoker.games/>
 
 API hosted at <https://planningpoker.games/api>
+
+## Publishing instructions
+
+- Update changelog and commit
+- `git tag -a v1.2.3`
+- `git push origin v1.2.3`
 
 ## Run application locally
 
