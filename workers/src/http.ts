@@ -239,32 +239,4 @@ router.get(
   }
 );
 
-// Update vote for user (and add user to game) (PUT /api/games/:gameId)
-router.put(
-  '/api/games/:gameId',
-  withUser,
-  requireUser,
-  async (request, env) => {
-    // request.user is added via `withUser` middleware
-    const { params, query, user } = request;
-    const { gameId } = params;
-    const { story, vote } = query;
-    let id = env.GAME_DO.idFromName(gameId);
-    let obj = env.GAME_DO.get(id);
-    let resp = await obj.fetch(
-      new Request(
-        `http://durable/update?` +
-          new URLSearchParams({ story, vote, user: JSON.stringify(user) })
-      )
-    );
-    let results = JSON.stringify(await resp.json(), null, 2);
-
-    return new Response(results, {
-      headers: {
-        'content-type': 'application/json;charset=UTF-8'
-      }
-    });
-  }
-);
-
 router.all('*', () => new Response('Not Found.', { status: 404 }));

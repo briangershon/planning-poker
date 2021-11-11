@@ -52,4 +52,19 @@ export class WebsocketClient {
     this.websocket.send(JSON.stringify(message));
     console.log('sent message to server', message);
   }
+
+  sendStory(newStory) {
+    if (!this.initialized) {
+        console.log('Websocket not initialized: Can not send story.');
+        return;
+      }
+      const message = {
+        sessionId: this.sessionId,
+        gameId: this.gameId,
+        eventId: 'update-story',
+        eventData: newStory,
+      };
+      this.websocket.send(JSON.stringify(message));
+      console.log('sent message to server', message);
+  }
 }

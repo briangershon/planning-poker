@@ -36,16 +36,27 @@ export async function handleSocket(request, env) {
 
     // TODO: retrieve and verify gameId
 
+    const id = env.GAME_DO.idFromName(gameId);
+    const obj = env.GAME_DO.get(id);
+    let resp;
+
     // process message
     switch (eventId) {
       case 'vote':
         const vote = eventData;
-        let id = env.GAME_DO.idFromName(gameId);
-        let obj = env.GAME_DO.get(id);
-        let resp = await obj.fetch(
+        resp = await obj.fetch(
           new Request(
             `http://durable/update?` +
               new URLSearchParams({ vote, user: JSON.stringify(user) })
+          )
+        );
+        break;
+      case 'update-story':
+        const newStory = eventData;
+        resp = await obj.fetch(
+          new Request(
+            `http://durable/update?` +
+              new URLSearchParams({ story: newStory, user: JSON.stringify(user) })
           )
         );
         break;

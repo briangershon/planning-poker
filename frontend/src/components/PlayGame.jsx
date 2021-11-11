@@ -106,13 +106,7 @@ function PlayGame() {
 
   async function sendStoryUpdate() {
     setUpdatingStory(true);
-    const response = await fetch(
-      `${SITE_URL}/api/games/${gameId}?` +
-        new URLSearchParams({ story: storyEditBuffer }),
-      {
-        method: 'PUT',
-      }
-    );
+    ws.current.sendStory(storyEditBuffer);
     dispatch(updateStory(storyEditBuffer));
     setStoryEditBuffer('');
     setUpdatingStory(false);
