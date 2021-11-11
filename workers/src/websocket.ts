@@ -32,11 +32,11 @@ declare global {
   }
 }
 
-import { withUser } from './http';
+import { getCurrentUser } from './auth';
 
 export async function handleSocket(request, env) {
-  await withUser(request, env);
-  if (!request.user.id) {
+  const user = await getCurrentUser(request, env);
+  if (!user) {
     return new Response('Unauthorized', { status: 401 });
   }
 

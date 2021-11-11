@@ -2,30 +2,14 @@ import { Router } from 'itty-router';
 import { createOAuthUserAuth } from '@octokit/auth-oauth-user';
 import { Octokit } from 'octokit';
 export { GameDO } from './game-durable-object';
-import { AuthUser } from './auth-user';
-import { AuthSession } from './auth-session';
 import { serialize } from 'cookie';
 import { v4 as uuid } from 'uuid';
+import { createOrUpdateUser, getCurrentUser, killCurrentUser } from './auth';
 
 export const router = Router();
 
 export const withUser = async (request, env) => {
-  request.user = null;
-
-  const sessionId = AuthSession.sessionIdFromCookieHeader(
-    request['headers'].get('cookie')
-  );
-
-  if (sessionId) {
-    const sessionUser = new AuthSession(env);
-    const userId = await sessionUser.getUserBySession(sessionId);
-    if (!userId) {
-      return;
-    }
-    const authUser = new AuthUser(env);
-    request.user = await authUser.getUser(userId);
-    request.user.id = userId;
-  }
+  request.user = await getCurrentUser(request, env);
 };
 
 // requireUser optionally returns (early) if user not found on request
@@ -61,14 +45,7 @@ router.get('/api/login/github', async (request, env) => {
 });
 
 router.get('/api/login/github/callback', async (request, env) => {
-  const session = new AuthSession(env);
-
-  const existingSessionId = AuthSession.sessionIdFromCookieHeader(
-    request['headers'].get('cookie')
-  );
-  if (existingSessionId && existingSessionId !== 'null') {
-    await session.deleteSession(existingSessionId);
-  }
+  killCurrentUser(request, env);
 
   const auth = createOAuthUserAuth({
     clientId: env.GITHUB_CLIENT_ID,
@@ -80,21 +57,24 @@ router.get('/api/login/github/callback', async (request, env) => {
   const octokit = new Octokit({ auth: token });
   const user = await octokit.request('GET /user');
 
-  const authUser = new AuthUser(env);
   const { id, name, avatar_url, login } = user.data;
 
   const userKey = `GITHUB:${id}`;
 
-  await authUser.saveUser(userKey, {
-    name,
-    avatarUrl: avatar_url,
-    token,
-    login
-  });
-
   const twoWeeks = 60 * 60 * 24 * 14;
 
-  const sessionId = await session.addSession(userKey, twoWeeks);
+  const sessionId = await createOrUpdateUser(
+    request,
+    env,
+    {
+      id: userKey,
+      name,
+      avatarUrl: avatar_url,
+      token,
+      login
+    },
+    twoWeeks
+  );
 
   const cookie = serialize('session', sessionId, {
     maxAge: twoWeeks,
@@ -121,15 +101,7 @@ router.get('/api/login/github/callback', async (request, env) => {
 });
 
 router.get('/api/logout', async (request, env) => {
-  const session = new AuthSession(env);
-
-  const existingSessionId = AuthSession.sessionIdFromCookieHeader(
-    request['headers'].get('cookie')
-  );
-
-  if (existingSessionId) {
-    await session.deleteSession(existingSessionId);
-  }
+  killCurrentUser(request, env);
 
   // clear session cookie and delete when browser closes
   const cookie = serialize('session', null, {
