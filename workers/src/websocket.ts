@@ -32,9 +32,13 @@ declare global {
   }
 }
 
+import { withUser } from './http';
+
 export async function handleSocket(request, env) {
-  // TODO: Verify valid user in header, return 401 if not valid
-  // return new Response("Unauthorized", { status: 401 })
+  await withUser(request, env);
+  if (!request.user.id) {
+    return new Response('Unauthorized', { status: 401 });
+  }
 
   const upgradeHeader = request.headers.get('Upgrade');
   if (upgradeHeader !== 'websocket') {
@@ -49,7 +53,7 @@ export async function handleSocket(request, env) {
     console.log('websocket closed');
   });
 
-  server.addEventListener('error', (e) => {
+  server.addEventListener('error', e => {
     console.log('websocket error', e);
   });
 

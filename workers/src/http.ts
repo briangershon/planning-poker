@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 
 export const router = Router();
 
-const withUser = async (request, env) => {
+export const withUser = async (request, env) => {
   request.user = null;
 
   const sessionId = AuthSession.sessionIdFromCookieHeader(
