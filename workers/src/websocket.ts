@@ -1,41 +1,7 @@
-declare global {
-  interface CloudflareWebsocket {
-    accept(): unknown;
-    addEventListener(
-      event: 'close',
-      callbackFunction: (code?: number, reason?: string) => unknown
-    ): unknown;
-    addEventListener(
-      event: 'error',
-      callbackFunction: (e: unknown) => unknown
-    ): unknown;
-    addEventListener(
-      event: 'message',
-      callbackFunction: (event: { data: any }) => unknown
-    ): unknown;
-
-    /**
-     * @param code https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
-     * @param reason
-     */
-    close(code?: number, reason?: string): unknown;
-    send(message: string | Uint8Array): unknown;
-  }
-
-  class WebSocketPair {
-    0: CloudflareWebsocket; // Client
-    1: CloudflareWebsocket; // Server
-  }
-
-  interface ResponseInit {
-    webSocket?: CloudflareWebsocket;
-  }
-}
-
-import { getCurrentUser } from './auth';
+import { getCurrentUserFromCookie, getCurrentUserFromSessionId } from './auth';
 
 export async function handleSocket(request, env) {
-  const user = await getCurrentUser(request, env);
+  const user = await getCurrentUserFromCookie(request, env);
   if (!user) {
     return new Response('Unauthorized', { status: 401 });
   }
@@ -57,9 +23,33 @@ export async function handleSocket(request, env) {
     console.log('websocket error', e);
   });
 
-  server.addEventListener('message', event => {
-    console.log('incoming websocket data:', event.data);
-    server.send('howdy, message received');
+  server.addEventListener('message', async event => {
+    server.send('message received for game' + event.data);
+    const { sessionId, gameId, eventId, eventData } = JSON.parse(event.data);
+
+    // retrieve and verify user
+    const user = await getCurrentUserFromSessionId(sessionId, env);
+    if (!user) {
+      console.log('invalid user');
+      return;
+    }
+
+    // TODO: retrieve and verify gameId
+
+    // process message
+    switch (eventId) {
+      case 'vote':
+        const vote = eventData;
+        let id = env.GAME_DO.idFromName(gameId);
+        let obj = env.GAME_DO.get(id);
+        let resp = await obj.fetch(
+          new Request(
+            `http://durable/update?` +
+              new URLSearchParams({ vote, user: JSON.stringify(user) })
+          )
+        );
+        break;
+    }
   });
 
   return new Response(null, {

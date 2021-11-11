@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 const { SITE_URL, WEBSOCKET_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
+import Cookies from 'js-cookie';
 
 import Players from './Players';
 import styles from './PlayGame.module.css';
@@ -14,6 +15,8 @@ import {
   updateStory,
   updatePlayers,
 } from '../store/pokerSlice';
+
+import { WebsocketClient } from '../lib/websocket_client';
 
 function PlayGame() {
   const game = useSelector((state) => state.poker);
@@ -28,30 +31,16 @@ function PlayGame() {
 
   let history = useHistory();
 
-  function handleWebsocket() {
-    const websocket = new WebSocket(WEBSOCKET_URL);
-    try {
-      if (!websocket) {
-        throw new Error("Websocket: Server didn't accept ws");
-      }
-      websocket.addEventListener('open', () => {
-        websocket.send('YOYOYO');
-      });
+  const ws = useRef(null);
 
-      websocket.addEventListener('message', (event) => {
-        console.log('Websocket: Message received from server:', event.data);
-      });
-
-      websocket.addEventListener('close', () => {
-        console.log('Websocket: Closed websocket');
-      });
-    } catch (e) {
-      console.log('WEBSOCKET ERROR', e);
-    }
+  function initWebsocket() {
+    const sessionId = Cookies.get('session');
+    ws.current = new WebsocketClient({ url: WEBSOCKET_URL, sessionId, gameId });
+    ws.current.init();
   }
 
   useEffect(() => {
-    handleWebsocket();
+    initWebsocket();
   }, []);
 
   function refresh() {
@@ -130,13 +119,7 @@ function PlayGame() {
   }
 
   async function sendVote(voteCasted) {
-    const response = await fetch(
-      `${SITE_URL}/api/games/${gameId}?` +
-        new URLSearchParams({ vote: voteCasted }),
-      {
-        method: 'PUT',
-      }
-    );
+    ws.current.sendVote(voteCasted);
     dispatch(vote(voteCasted));
   }
 

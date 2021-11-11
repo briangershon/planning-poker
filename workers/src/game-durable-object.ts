@@ -19,10 +19,12 @@ export class GameDO {
   env: Env;
   story: string;
   initializePromise: Promise<void>;
+  sockets: CloudflareWebsocket[];
 
   constructor(state: State, env: Env) {
     this.state = state;
     this.env = env;
+    this.sockets = [];
 
     // TODO: Miniflare doesn't yet support blockConcurrencyWhile()
     //       so using old `initialize()` style for now.

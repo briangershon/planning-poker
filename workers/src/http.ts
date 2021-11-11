@@ -4,12 +4,12 @@ import { Octokit } from 'octokit';
 export { GameDO } from './game-durable-object';
 import { serialize } from 'cookie';
 import { v4 as uuid } from 'uuid';
-import { createOrUpdateUser, getCurrentUser, killCurrentUser } from './auth';
+import { createOrUpdateUser, getCurrentUserFromCookie, killCurrentUser } from './auth';
 
 export const router = Router();
 
 export const withUser = async (request, env) => {
-  request.user = await getCurrentUser(request, env);
+  request.user = await getCurrentUserFromCookie(request, env);
 };
 
 // requireUser optionally returns (early) if user not found on request
