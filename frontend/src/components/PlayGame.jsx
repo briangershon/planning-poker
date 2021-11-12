@@ -149,7 +149,7 @@ function PlayGame() {
       {!isLoggedIn && (
         <div>
           Click <a href={loginWithRedirect}>here to login</a> and continue to
-          the plannnig poker game.
+          the planning poker game.
         </div>
       )}
 
