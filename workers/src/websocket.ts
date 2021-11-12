@@ -24,7 +24,12 @@ export async function handleSocket(request, env) {
   });
 
   server.addEventListener('message', async event => {
-    server.send('message received for game' + event.data);
+    server.send(
+      JSON.stringify({
+        eventId: 'debug',
+        eventData: 'message received for game' + event.data
+      })
+    );
     const { sessionId, gameId, eventId, eventData } = JSON.parse(event.data);
 
     // retrieve and verify user
@@ -38,13 +43,12 @@ export async function handleSocket(request, env) {
 
     const id = env.GAME_DO.idFromName(gameId);
     const obj = env.GAME_DO.get(id);
-    let resp;
 
     // process message
     switch (eventId) {
       case 'vote':
         const vote = eventData;
-        resp = await obj.fetch(
+        await obj.fetch(
           new Request(
             `http://durable/update?` +
               new URLSearchParams({ vote, user: JSON.stringify(user) })
@@ -53,13 +57,18 @@ export async function handleSocket(request, env) {
         break;
       case 'update-story':
         const newStory = eventData;
-        resp = await obj.fetch(
+        await obj.fetch(
           new Request(
             `http://durable/update?` +
-              new URLSearchParams({ story: newStory, user: JSON.stringify(user) })
+              new URLSearchParams({
+                story: newStory,
+                user: JSON.stringify(user)
+              })
           )
         );
         break;
+      default:
+        console.log('unknown websocket event', event.data);
     }
   });
 

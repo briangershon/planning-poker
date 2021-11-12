@@ -1,18 +1,18 @@
-import { vote } from '../store/pokerSlice';
-
 export class WebsocketClient {
   url: string;
   sessionId: string;
   gameId: string;
   websocket: WebSocket;
   initialized: boolean;
+  onMessage: Function;
 
-  constructor({ url, sessionId, gameId }) {
+  constructor({ url, sessionId, gameId, onMessage }) {
     this.url = url;
     this.sessionId = sessionId;
     this.gameId = gameId;
     this.websocket = null;
     this.initialized = false;
+    this.onMessage = onMessage;
   }
 
   init() {
@@ -27,6 +27,7 @@ export class WebsocketClient {
 
       this.websocket.addEventListener('message', (event) => {
         console.log('Websocket: Message received from server:', event.data);
+        this.onMessage(JSON.parse(event.data));
       });
 
       this.websocket.addEventListener('close', () => {
@@ -55,16 +56,16 @@ export class WebsocketClient {
 
   sendStory(newStory) {
     if (!this.initialized) {
-        console.log('Websocket not initialized: Can not send story.');
-        return;
-      }
-      const message = {
-        sessionId: this.sessionId,
-        gameId: this.gameId,
-        eventId: 'update-story',
-        eventData: newStory,
-      };
-      this.websocket.send(JSON.stringify(message));
-      console.log('sent message to server', message);
+      console.log('Websocket not initialized: Can not send story.');
+      return;
+    }
+    const message = {
+      sessionId: this.sessionId,
+      gameId: this.gameId,
+      eventId: 'update-story',
+      eventData: newStory,
+    };
+    this.websocket.send(JSON.stringify(message));
+    console.log('sent message to server', message);
   }
 }

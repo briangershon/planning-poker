@@ -33,9 +33,30 @@ function PlayGame() {
 
   const ws = useRef(null);
 
+  function onMessage(data) {
+    const { eventId, eventData } = data;
+    switch (eventId) {
+      case 'debug':
+        console.log(eventData);
+        break;
+      case 'game-state':
+        dispatch(updateStory(eventData.story));
+        dispatch(updatePlayers(eventData.votes));
+        dispatch(vote(eventData.you.vote));
+        break;
+      default:
+        console.log('unknown incoming websocket event', event);
+    }
+  }
+
   function initWebsocket() {
     const sessionId = Cookies.get('session');
-    ws.current = new WebsocketClient({ url: WEBSOCKET_URL, sessionId, gameId });
+    ws.current = new WebsocketClient({
+      url: WEBSOCKET_URL,
+      sessionId,
+      gameId,
+      onMessage,
+    });
     ws.current.init();
   }
 
@@ -126,7 +147,7 @@ function PlayGame() {
       {!isLoggedIn && (
         <div>
           Click <a href={loginWithRedirect}>here to login</a> and continue to
-          the plannnig poker game.
+          the planning poker game.
         </div>
       )}
 
