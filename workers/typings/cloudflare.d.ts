@@ -21,7 +21,7 @@ interface CloudflareWebsocket {
   send(message: string | Uint8Array): unknown;
 }
 
-class WebSocketPair {
+declare class WebSocketPair {
   0: CloudflareWebsocket; // Client
   1: CloudflareWebsocket; // Server
 }
