@@ -46,7 +46,7 @@ export class GameDO {
 
         const [client, server] = Object.values(new WebSocketPair());
 
-        server.accept();
+        this.sockets.handleSocket(server);
 
         server.addEventListener('close', () => {
           console.log('websocket closed');
@@ -57,12 +57,12 @@ export class GameDO {
         });
 
         server.addEventListener('message', async event => {
-          server.send(
-            JSON.stringify({
-              eventId: 'debug',
-              eventData: 'message received for game' + event.data
-            })
-          );
+          // server.send(
+          //   JSON.stringify({
+          //     eventId: 'debug',
+          //     eventData: 'message received for game' + event.data
+          //   })
+          // );
           const { sessionId, gameId, eventId, eventData } = JSON.parse(
             event.data
           );
@@ -89,6 +89,7 @@ export class GameDO {
 
                 const { id } = user;
                 await this.state.storage.put(`VOTE|${id}`, newVote);
+                this.sockets.broadcast({ eventId: 'game-state-change' });
               }
               break;
 
@@ -97,6 +98,7 @@ export class GameDO {
 
               if (newStory !== 'undefined') {
                 await this.state.storage.put('story', newStory);
+                this.sockets.broadcast({ eventId: 'game-state-change' });
               }
               break;
 

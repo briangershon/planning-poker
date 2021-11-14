@@ -23,7 +23,6 @@ function PlayGame() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
-  const [isPolling, setIsPolling] = useState(true);
   const [storyEditBuffer, setStoryEditBuffer] = useState('');
   const [isUpdatingStory, setUpdatingStory] = useState(false);
 
@@ -39,10 +38,9 @@ function PlayGame() {
       case 'debug':
         console.log(eventData);
         break;
-      case 'game-state':
-        dispatch(updateStory(eventData.story));
-        dispatch(updatePlayers(eventData.votes));
-        dispatch(vote(eventData.you.vote));
+      case 'game-state-change':
+        // socket just letting us know something changed, we'll fetch the updated data ourselves
+        refresh();
         break;
       default:
         console.log('unknown incoming websocket event', event);
@@ -81,34 +79,10 @@ function PlayGame() {
       });
   }
 
-  // refresh votes when page first loads
+  // refresh all game data when page first loads
   useEffect(() => {
     refresh();
   }, []);
-
-  // auto-refresh votes on an interval
-  useEffect(() => {
-    if (isPolling) {
-      const interval = setInterval(() => {
-        refresh();
-      }, 5000);
-      return () => {
-        return clearInterval(interval);
-      };
-    }
-  }, [isPolling]);
-
-  // turn off auto-refresh after certain time period
-  useEffect(() => {
-    if (isPolling) {
-      const timer = setTimeout(() => {
-        setIsPolling(false);
-      }, 120000);
-      return () => {
-        return clearTimeout(timer);
-      };
-    }
-  }, [isPolling]);
 
   async function deleteCurrentGame() {
     if (confirm('Are you sure you want to delete?')) {
@@ -226,28 +200,6 @@ function PlayGame() {
               <button onClick={() => dispatch(hideCards())}>Hide Cards</button>
             ) : (
               <button onClick={() => dispatch(showCards())}>Show Cards</button>
-            )}
-          </div>
-
-          <div>
-            {isPolling && (
-              <div>
-                Auto refresh: <strong>on</strong>. Updates every 5 seconds over
-                120 seconds.
-              </div>
-            )}
-            {!isPolling && (
-              <div>
-                <strong>Auto refresh is off so data is not updating.</strong>{' '}
-                Press start button to continue.{' '}
-                <button
-                  onClick={() => {
-                    setIsPolling(true);
-                  }}
-                >
-                  Start
-                </button>
-              </div>
             )}
           </div>
 
