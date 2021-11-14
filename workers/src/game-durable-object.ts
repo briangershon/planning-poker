@@ -28,42 +28,9 @@ export class GameDO {
     this.state = state;
     this.env = env;
     this.sockets = new WebSocketServer();
-
-    // TODO: Miniflare doesn't yet support blockConcurrencyWhile()
-    //       so using old `initialize()` style for now.
-    // https://github.com/cloudflare/durable-objects-template/commit/5519378a3e553c09873fc0d80cb0257bdb2b03f2
-    //
-    // `blockConcurrencyWhile()` ensures no requests are delivered until
-    // initialization completes.
-    // this.state.blockConcurrencyWhile(async () => {
-    //   let stored = await this.state.storage.get('value');
-    //   this.value = stored || 0;
-    // });
-  }
-
-  // initialize with saved data if it exists
-  async initialize() {
-    let stored = await this.state.storage.get('story');
-    if (stored === undefined) {
-      const defaultValue = '';
-      await this.state.storage.put('story', defaultValue);
-      this.story = defaultValue;
-    } else {
-      this.story = stored;
-    }
   }
 
   async fetch(request) {
-    // TODO: Miniflare doesn't yet support blockConcurrencyWhile()
-    // so using this old method. Also see above.
-    if (!this.initializePromise) {
-      this.initializePromise = this.initialize().catch(err => {
-        this.initializePromise = undefined;
-        throw err;
-      });
-    }
-    await this.initializePromise;
-
     let url = new URL(request.url);
 
     switch (url.pathname) {
@@ -130,7 +97,6 @@ export class GameDO {
 
               if (newStory !== 'undefined') {
                 await this.state.storage.put('story', newStory);
-                this.story = newStory;
               }
               break;
 
@@ -180,7 +146,7 @@ export class GameDO {
 
         return new Response(
           JSON.stringify({
-            story: this.story,
+            story: await this.state.storage.get('story'),
             votes: votes,
             you
           }),
