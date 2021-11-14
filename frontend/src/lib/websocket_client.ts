@@ -16,7 +16,7 @@ export class WebsocketClient {
   }
 
   init() {
-    this.websocket = new WebSocket(this.url);
+    this.websocket = new WebSocket(`${this.url}?gameId=${encodeURI(this.gameId)}`);
     try {
       if (!this.websocket) {
         throw new Error("Websocket: Server didn't accept websocket");

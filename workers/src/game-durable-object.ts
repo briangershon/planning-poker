@@ -1,3 +1,6 @@
+import { getCurrentUserFromSessionId } from './auth';
+import { WebSocketServer } from './websocket/websocket-server';
+
 interface Env {
   USER: {
     get(key: string, options: Object): Promise<any>;
@@ -19,12 +22,12 @@ export class GameDO {
   env: Env;
   story: string;
   initializePromise: Promise<void>;
-  sockets: CloudflareWebsocket[];
+  sockets: WebSocketServer;
 
   constructor(state: State, env: Env) {
     this.state = state;
     this.env = env;
-    this.sockets = [];
+    this.sockets = new WebSocketServer();
 
     // TODO: Miniflare doesn't yet support blockConcurrencyWhile()
     //       so using old `initialize()` style for now.
@@ -64,28 +67,83 @@ export class GameDO {
     let url = new URL(request.url);
 
     switch (url.pathname) {
-      case '/update':
-        let newStory = url.searchParams.get('story');
-        if (newStory !== 'undefined') {
-          await this.state.storage.put('story', newStory);
-          this.story = newStory;
-        }
-
-        // update vote
-        let newVote = url.searchParams.get('vote');
-        if (newVote !== 'undefined') {
-          if (!['XS', 'S', 'M', 'L', 'XL', 'XXL', '?'].includes(newVote)) {
-            newVote = null;
-          }
-
-          const { id } = JSON.parse(url.searchParams.get('user'));
-          await this.state.storage.put(`VOTE|${id}`, newVote);
-        }
-
-        break;
       case '/deallocate':
         await this.state.storage.deleteAll();
         break;
+
+      case '/api/ws/':
+        const upgradeHeader = request.headers.get('Upgrade');
+        if (upgradeHeader !== 'websocket') {
+          return new Response('Expected websocket', { status: 400 });
+        }
+
+        const [client, server] = Object.values(new WebSocketPair());
+
+        server.accept();
+
+        server.addEventListener('close', () => {
+          console.log('websocket closed');
+        });
+
+        server.addEventListener('error', e => {
+          console.log('websocket error', e);
+        });
+
+        server.addEventListener('message', async event => {
+          server.send(
+            JSON.stringify({
+              eventId: 'debug',
+              eventData: 'message received for game' + event.data
+            })
+          );
+          const { sessionId, gameId, eventId, eventData } = JSON.parse(
+            event.data
+          );
+
+          // retrieve and verify user
+          const user = await getCurrentUserFromSessionId(sessionId, this.env);
+          if (!user) {
+            console.log('invalid user');
+            return;
+          }
+
+          // process message
+          switch (eventId) {
+            case 'vote':
+              let newVote = eventData;
+
+              // update vote, or set to null if unknown value
+              if (newVote !== 'undefined') {
+                if (
+                  !['XS', 'S', 'M', 'L', 'XL', 'XXL', '?'].includes(newVote)
+                ) {
+                  newVote = null;
+                }
+
+                const { id } = user;
+                await this.state.storage.put(`VOTE|${id}`, newVote);
+              }
+              break;
+
+            case 'update-story':
+              const newStory = eventData;
+
+              if (newStory !== 'undefined') {
+                await this.state.storage.put('story', newStory);
+                this.story = newStory;
+              }
+              break;
+
+            default:
+              console.log('unknown websocket event', event.data);
+          }
+        });
+
+        return new Response(null, {
+          status: 101,
+          webSocket: client
+        });
+
       case '/':
         const voteList = await this.state.storage.list({ prefix: 'VOTE|' });
         const { id } = JSON.parse(url.searchParams.get('user'));
