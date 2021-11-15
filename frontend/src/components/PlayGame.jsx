@@ -140,14 +140,14 @@ function PlayGame() {
 
             {game.story ? (
               <div>
-                Story: <strong>{game.story}</strong>
+                Story description: <strong>{game.story}</strong>
               </div>
             ) : (
               <strong>Please add a story.</strong>
             )}
           </div>
           <div>
-            Update story:{' '}
+            Update story description:{' '}
             <input
               disabled={isUpdatingStory}
               value={storyEditBuffer}
