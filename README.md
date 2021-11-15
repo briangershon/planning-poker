@@ -4,13 +4,15 @@
 
 ## About
 
-The game is an entry in the [Cloudflare Developer Challenge](https://challenge.developers.cloudflare.com).
+This game began as an entry in the [Cloudflare Developer Challenge](https://challenge.developers.cloudflare.com). See [Changelog](./CHANGELOG.md) for `v1.0.0`.
+
+Websocket support was added in `v2.0.0`.
 
 The Cloudflare Developer Challenge is an event where developers are challenged to build an application using at least two of the products from the Cloudflare developer platform.
 
-This project uses Cloudflare Workers, Workers KV, Durable Objects, and Cloudflare Pages. Also React, Redux Toolkit, TypeScript and Snowpack.
+This project uses Cloudflare Workers, Workers KV, Durable Objects, Websockets and Cloudflare Pages. Also React, Redux Toolkit, TypeScript and Snowpack.
 
-This was a good fit for Cloudflare `Durable Objects` since each game manages state for multiple players.
+This project was a good fit for Cloudflare `Durable Objects` since each game manages state for multiple players, as well as `Websockets` for real-time player updates.
 
 ## Screenshot
 
