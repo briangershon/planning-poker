@@ -21,19 +21,7 @@ describe('WebSocketServer', () => {
     expect(m.accept).toHaveBeenCalled();
   });
 
-  test('socket receives a message from client and broadcasts it', async () => {
-    const m = new MockSocket();
-    await ws.handleSocket(m);
-
-    const message = { name: 'Brian' };
-    const receivedMessage = JSON.stringify(message);
-
-    jest.spyOn(m, 'send');
-    m.sendMessageFromClient(message);
-    expect(m.send).toHaveBeenCalledWith(receivedMessage);
-  });
-
-  test('broadcast sends message to everyone', async () => {
+  test('broadcast sends message to everyone (including sender)', async () => {
     const m = new MockSocket();
     const m2 = new MockSocket();
     const m3 = new MockSocket();
@@ -55,6 +43,30 @@ describe('WebSocketServer', () => {
     expect(m3.send).toHaveBeenCalledWith(receivedMessage);
   });
 
+  test('broadcast sends message to everyone (EXCEPT sender)', async () => {
+    const m = new MockSocket();
+    const m2 = new MockSocket();
+    const m3 = new MockSocket();
+    await ws.handleSocket(m);
+    await ws.handleSocket(m2);
+    await ws.handleSocket(m3);
+
+    const senderSession = ws.sessions[0]; // m socket session
+
+    jest.spyOn(m, 'send');
+    jest.spyOn(m2, 'send');
+    jest.spyOn(m3, 'send');
+
+    const message = { msg: 'hi' };
+    const receivedMessage = JSON.stringify(message);
+
+    ws.broadcastExceptSender(senderSession, message);
+
+    expect(m.send).not.toHaveBeenCalled();
+    expect(m2.send).toHaveBeenCalledWith(receivedMessage);
+    expect(m3.send).toHaveBeenCalledWith(receivedMessage);
+  });
+
   test('when socket closes, no longer send messages to it', async () => {
     const m = new MockSocket();
     await ws.handleSocket(m);
@@ -63,11 +75,11 @@ describe('WebSocketServer', () => {
     const message = { name: 'Brian' };
 
     jest.spyOn(m, 'send');
-    m.sendMessageFromClient(message);
+    ws.sendMessage(ws.sessions[0], message);
     expect(m.send).not.toHaveBeenCalled();
   });
 
-  test('when there are multiple sessions, make sure we close the right one', async () => {
+  test('when there are multiple sessions, make sure we close the right one (m2)', async () => {
     const m = new MockSocket();
     const m2 = new MockSocket();
     const m3 = new MockSocket();
@@ -79,15 +91,11 @@ describe('WebSocketServer', () => {
     const message = { name: 'Brian' };
 
     jest.spyOn(m, 'send');
-    m.sendMessageFromClient(message);
-    expect(m.send).toHaveBeenCalled();
-
     jest.spyOn(m2, 'send');
-    m2.sendMessageFromClient(message);
-    expect(m2.send).not.toHaveBeenCalled();
-
     jest.spyOn(m3, 'send');
-    m3.sendMessageFromClient(message);
+    ws.broadcast(message);
+    expect(m.send).toHaveBeenCalled();
+    expect(m2.send).not.toHaveBeenCalled();
     expect(m3.send).toHaveBeenCalled();
   });
 
@@ -100,9 +108,7 @@ describe('WebSocketServer', () => {
     jest.spyOn(m, 'send').mockImplementation(() => {
       throw new Error();
     });
-    m.sendMessageFromClient(message);
-
-    // send errors out and there should be no sessions
+    ws.sendMessage(ws.sessions[0], message);
     expect(ws.count()).toEqual(0);
   });
 });

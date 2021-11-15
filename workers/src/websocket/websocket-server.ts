@@ -37,22 +37,26 @@ export class WebSocketServer {
     });
   }
 
-  async handleSocket(socket: CloudflareWebsocket) {
+  broadcastExceptSender(senderSessionToExclude, message: Message) {
+    this.sessions.map(sess => {
+      if (senderSessionToExclude !== sess) {
+        this.sendMessage(sess, message);
+      }
+    });
+  }
+
+  async handleSocket(socket: CloudflareWebsocket): Promise<WebSocketSession> {
     let mySocket = { socket };
 
     socket.accept();
     this.sessions.push(mySocket);
 
-    socket.addEventListener('message', async message => {
-      this.broadcast(message);
-    });
-
-    socket.addEventListener('close', async message => {
+    socket.addEventListener('close', async () => {
       this.sessions = this.sessions.filter(sess => {
         return sess !== mySocket;
       });
-
-      this.broadcast(message);
     });
+
+    return mySocket;
   }
 }

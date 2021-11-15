@@ -6,16 +6,12 @@
 */
 
 export class MockSocket implements CloudflareWebsocket {
-  messageEventCallback: Function;
   closeEventCallback: Function;
 
   accept() {}
 
   addEventListener(eventType, eventCallback) {
     switch (eventType) {
-      case 'message':
-        this.messageEventCallback = eventCallback;
-        break;
       case 'close':
         this.closeEventCallback = eventCallback;
         break;
@@ -31,10 +27,6 @@ export class MockSocket implements CloudflareWebsocket {
   send() {}
 
   // helper functions to simulate client websocket actions
-
-  sendMessageFromClient(message) {
-    this.messageEventCallback(message);
-  }
   sendCloseFromClient() {
     this.closeEventCallback();
   }
