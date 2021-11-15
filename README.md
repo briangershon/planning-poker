@@ -29,8 +29,8 @@ API hosted at <https://planningpoker.games/api>
 ## Github publishing instructions
 
 - Update changelog in the feature branch, and remember to add link to the bottom and updated the `unreleased` link too. Commit and push.
-- `git tag -a v1.2.3`
-- `git push origin v1.2.3`
+- Tag it. For example `git tag -a v2.0.0 -m "Add full websocket support"`
+- Push tag. For example `git push origin v2.0.0`
 
 ## Run application locally
 
