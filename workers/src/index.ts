@@ -1,5 +1,5 @@
-import { router } from './http';
-import { handleSocket } from './websocket';
+import { router } from './http-api';
+import { handleSocket } from './websocket-api';
 export { GameDO } from './game-durable-object';
 
 export default {

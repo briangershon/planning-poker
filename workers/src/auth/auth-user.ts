@@ -1,6 +1,7 @@
 // env is a Cloudflare Worker environment that has KV methods
 
-interface User {
+export interface User {
+  id: string;
   name: string;
   avatarUrl: string;
   token: string;
@@ -22,16 +23,20 @@ export class AuthUser {
   }
 
   async getUser(id: string): Promise<User | null> {
-    return this.env.USER.get(id, {
+    const userData = await this.env.USER.get(id, {
       type: 'json'
     });
+    return { ...userData, id };
   }
 
-  async saveUser(id: string, user: User) {
+  async saveUser(user: User) {
     let { name, avatarUrl, token, login } = user;
     if (!name) {
       name = login;
     }
-    await this.env.USER.put(id, JSON.stringify({ name, avatarUrl, token }));
+    await this.env.USER.put(
+      user.id,
+      JSON.stringify({ name, avatarUrl, token })
+    );
   }
 }

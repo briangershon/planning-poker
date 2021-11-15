@@ -26,11 +26,11 @@ Live website hosted at <https://planningpoker.games/>
 
 API hosted at <https://planningpoker.games/api>
 
-## Publishing instructions
+## Github publishing instructions
 
-- Update changelog, and remember to add link to the bottom and updated the `unreleased` link too. Commit.
-- `git tag -a v1.2.3`
-- `git push origin v1.2.3`
+- Update changelog in the feature branch, and remember to add link to the bottom and updated the `unreleased` link too. Commit and push.
+- Tag it. For example `git tag -a v2.0.0 -m "Add full websocket support"`
+- Push tag. For example `git push origin v2.0.0`
 
 ## Run application locally
 
@@ -69,9 +69,9 @@ API hosted at <https://planningpoker.games/api>
 
 Setup Cloudflare Pages for PRODUCTION:
 
-* Build command: `npm run build:prod`
-* Build output directory: `/build`
-* Root directory: `/frontend`
+- Build command: `npm run build:prod`
+- Build output directory: `/build`
+- Root directory: `/frontend`
 
 To deploy, `push` commits to this github repo.
 

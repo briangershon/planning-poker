@@ -1,3 +1,6 @@
+import { getCurrentUserFromSessionId } from './auth';
+import { WebSocketServer } from './websocket/websocket-server';
+
 interface Env {
   USER: {
     get(key: string, options: Object): Promise<any>;
@@ -19,71 +22,96 @@ export class GameDO {
   env: Env;
   story: string;
   initializePromise: Promise<void>;
+  sockets: WebSocketServer;
 
   constructor(state: State, env: Env) {
     this.state = state;
     this.env = env;
-
-    // TODO: Miniflare doesn't yet support blockConcurrencyWhile()
-    //       so using old `initialize()` style for now.
-    // https://github.com/cloudflare/durable-objects-template/commit/5519378a3e553c09873fc0d80cb0257bdb2b03f2
-    //
-    // `blockConcurrencyWhile()` ensures no requests are delivered until
-    // initialization completes.
-    // this.state.blockConcurrencyWhile(async () => {
-    //   let stored = await this.state.storage.get('value');
-    //   this.value = stored || 0;
-    // });
-  }
-
-  // initialize with saved data if it exists
-  async initialize() {
-    let stored = await this.state.storage.get('story');
-    if (stored === undefined) {
-      const defaultValue = '';
-      await this.state.storage.put('story', defaultValue);
-      this.story = defaultValue;
-    } else {
-      this.story = stored;
-    }
+    this.sockets = new WebSocketServer();
   }
 
   async fetch(request) {
-    // TODO: Miniflare doesn't yet support blockConcurrencyWhile()
-    // so using this old method. Also see above.
-    if (!this.initializePromise) {
-      this.initializePromise = this.initialize().catch(err => {
-        this.initializePromise = undefined;
-        throw err;
-      });
-    }
-    await this.initializePromise;
-
     let url = new URL(request.url);
 
     switch (url.pathname) {
-      case '/update':
-        let newStory = url.searchParams.get('story');
-        if (newStory !== 'undefined') {
-          await this.state.storage.put('story', newStory);
-          this.story = newStory;
-        }
-
-        // update vote
-        let newVote = url.searchParams.get('vote');
-        if (newVote !== 'undefined') {
-          if (!['XS', 'S', 'M', 'L', 'XL', 'XXL', '?'].includes(newVote)) {
-            newVote = null;
-          }
-
-          const { id } = JSON.parse(url.searchParams.get('user'));
-          await this.state.storage.put(`VOTE|${id}`, newVote);
-        }
-
-        break;
       case '/deallocate':
         await this.state.storage.deleteAll();
         break;
+
+      case '/api/ws/':
+        const upgradeHeader = request.headers.get('Upgrade');
+        if (upgradeHeader !== 'websocket') {
+          return new Response('Expected websocket', { status: 400 });
+        }
+
+        const [client, server] = Object.values(new WebSocketPair());
+
+        let mySocket = await this.sockets.handleSocket(server);
+
+        server.addEventListener('close', () => {
+          console.log('websocket closed');
+        });
+
+        server.addEventListener('error', e => {
+          console.log('websocket error', e);
+        });
+
+        server.addEventListener('message', async event => {
+          // server.send(
+          //   JSON.stringify({
+          //     eventId: 'debug',
+          //     eventData: 'message received for game' + event.data
+          //   })
+          // );
+          const { sessionId, gameId, eventId, eventData } = JSON.parse(
+            event.data
+          );
+
+          // retrieve and verify user
+          const user = await getCurrentUserFromSessionId(sessionId, this.env);
+          if (!user) {
+            console.log('invalid user');
+            return;
+          }
+
+          // process message
+          switch (eventId) {
+            case 'vote':
+              let newVote = eventData;
+
+              // update vote, or set to null if unknown value
+              if (newVote !== 'undefined') {
+                if (
+                  !['XS', 'S', 'M', 'L', 'XL', 'XXL', '?'].includes(newVote)
+                ) {
+                  newVote = null;
+                }
+
+                const { id } = user;
+                await this.state.storage.put(`VOTE|${id}`, newVote);
+                this.sockets.broadcastExceptSender(mySocket, { eventId: 'game-state-change' });
+              }
+              break;
+
+            case 'update-story':
+              const newStory = eventData;
+
+              if (newStory !== 'undefined') {
+                await this.state.storage.put('story', newStory);
+                this.sockets.broadcastExceptSender(mySocket, { eventId: 'game-state-change' });
+              }
+              break;
+
+            default:
+              console.log('unknown websocket event', event.data);
+          }
+        });
+
+        return new Response(null, {
+          status: 101,
+          webSocket: client
+        });
+
       case '/':
         const voteList = await this.state.storage.list({ prefix: 'VOTE|' });
         const { id } = JSON.parse(url.searchParams.get('user'));
@@ -120,7 +148,7 @@ export class GameDO {
 
         return new Response(
           JSON.stringify({
-            story: this.story,
+            story: await this.state.storage.get('story'),
             votes: votes,
             you
           }),

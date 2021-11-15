@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 const { SITE_URL, WEBSOCKET_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
+import Cookies from 'js-cookie';
 
 import Players from './Players';
 import styles from './PlayGame.module.css';
@@ -15,12 +16,13 @@ import {
   updatePlayers,
 } from '../store/pokerSlice';
 
+import { WebsocketClient } from '../lib/websocket_client';
+
 function PlayGame() {
   const game = useSelector((state) => state.poker);
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
-  const [isPolling, setIsPolling] = useState(true);
   const [storyEditBuffer, setStoryEditBuffer] = useState('');
   const [isUpdatingStory, setUpdatingStory] = useState(false);
 
@@ -28,30 +30,36 @@ function PlayGame() {
 
   let history = useHistory();
 
-  function handleWebsocket() {
-    const websocket = new WebSocket(WEBSOCKET_URL);
-    try {
-      if (!websocket) {
-        throw new Error("Websocket: Server didn't accept ws");
-      }
-      websocket.addEventListener('open', () => {
-        websocket.send('YOYOYO');
-      });
+  const ws = useRef(null);
 
-      websocket.addEventListener('message', (event) => {
-        console.log('Websocket: Message received from server:', event.data);
-      });
-
-      websocket.addEventListener('close', () => {
-        console.log('Websocket: Closed websocket');
-      });
-    } catch (e) {
-      console.log('WEBSOCKET ERROR', e);
+  function onMessage(data) {
+    const { eventId, eventData } = data;
+    switch (eventId) {
+      case 'debug':
+        console.log(eventData);
+        break;
+      case 'game-state-change':
+        // socket just letting us know something changed, we'll fetch the updated data ourselves
+        refresh();
+        break;
+      default:
+        console.log('unknown incoming websocket event', event);
     }
   }
 
+  function initWebsocket() {
+    const sessionId = Cookies.get('session');
+    ws.current = new WebsocketClient({
+      url: WEBSOCKET_URL,
+      sessionId,
+      gameId,
+      onMessage,
+    });
+    ws.current.init();
+  }
+
   useEffect(() => {
-    handleWebsocket();
+    initWebsocket();
   }, []);
 
   function refresh() {
@@ -71,34 +79,10 @@ function PlayGame() {
       });
   }
 
-  // refresh votes when page first loads
+  // refresh all game data when page first loads
   useEffect(() => {
     refresh();
   }, []);
-
-  // auto-refresh votes on an interval
-  useEffect(() => {
-    if (isPolling) {
-      const interval = setInterval(() => {
-        refresh();
-      }, 5000);
-      return () => {
-        return clearInterval(interval);
-      };
-    }
-  }, [isPolling]);
-
-  // turn off auto-refresh after certain time period
-  useEffect(() => {
-    if (isPolling) {
-      const timer = setTimeout(() => {
-        setIsPolling(false);
-      }, 120000);
-      return () => {
-        return clearTimeout(timer);
-      };
-    }
-  }, [isPolling]);
 
   async function deleteCurrentGame() {
     if (confirm('Are you sure you want to delete?')) {
@@ -117,26 +101,14 @@ function PlayGame() {
 
   async function sendStoryUpdate() {
     setUpdatingStory(true);
-    const response = await fetch(
-      `${SITE_URL}/api/games/${gameId}?` +
-        new URLSearchParams({ story: storyEditBuffer }),
-      {
-        method: 'PUT',
-      }
-    );
+    ws.current.sendStory(storyEditBuffer);
     dispatch(updateStory(storyEditBuffer));
     setStoryEditBuffer('');
     setUpdatingStory(false);
   }
 
   async function sendVote(voteCasted) {
-    const response = await fetch(
-      `${SITE_URL}/api/games/${gameId}?` +
-        new URLSearchParams({ vote: voteCasted }),
-      {
-        method: 'PUT',
-      }
-    );
+    ws.current.sendVote(voteCasted);
     dispatch(vote(voteCasted));
   }
 
@@ -168,14 +140,14 @@ function PlayGame() {
 
             {game.story ? (
               <div>
-                Story: <strong>{game.story}</strong>
+                Story description: <strong>{game.story}</strong>
               </div>
             ) : (
               <strong>Please add a story.</strong>
             )}
           </div>
           <div>
-            Update story:{' '}
+            Update story description:{' '}
             <input
               disabled={isUpdatingStory}
               value={storyEditBuffer}
@@ -228,28 +200,6 @@ function PlayGame() {
               <button onClick={() => dispatch(hideCards())}>Hide Cards</button>
             ) : (
               <button onClick={() => dispatch(showCards())}>Show Cards</button>
-            )}
-          </div>
-
-          <div>
-            {isPolling && (
-              <div>
-                Auto refresh: <strong>on</strong>. Updates every 5 seconds over
-                120 seconds.
-              </div>
-            )}
-            {!isPolling && (
-              <div>
-                <strong>Auto refresh is off so data is not updating.</strong>{' '}
-                Press start button to continue.{' '}
-                <button
-                  onClick={() => {
-                    setIsPolling(true);
-                  }}
-                >
-                  Start
-                </button>
-              </div>
             )}
           </div>
 
