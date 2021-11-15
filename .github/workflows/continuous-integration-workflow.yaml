@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ['12.x', '14.x']
+        node: ['12.x', '14.x', '16.x']
     steps:
       - name: Checkout
         uses: actions/checkout@master
@@ -25,22 +25,22 @@ jobs:
       - name: node version
         run: node --version
 
-      - name: npm install
+      - name: frontend - npm install
         run: npm install
         working-directory: ./frontend
 
-      - name: Compile
+      - name: frontend - build
         run: npm run build
         working-directory: ./frontend
 
-      - name: npm test
+      - name: frontend - tests
         run: npm run test-ci
         working-directory: ./frontend
 
-      - name: npm install
+      - name: worker - npm install
         run: npm install
         working-directory: ./workers
 
-      - name: npm test
+      - name: worker - tests
         run: npm run test-ci
         working-directory: ./workers
