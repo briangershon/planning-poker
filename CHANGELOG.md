@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [2.0.1] - 2021-11-18
+
+### Fixed
+
+- Clear previous game state when switching games
+
 ## [2.0.0] - 2021-11-14
 
 ### Added
@@ -46,7 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hosted on Cloudflare Pages
 - Changelog
 
-[Unreleased]: https://github.com/briangershon/planning-poker/compare/v2.0.0...HEAD
+[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/briangershon/planning-poker/releases/tag/v2.0.1
 [2.0.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.0.0
 [1.0.1]: https://github.com/briangershon/planning-poker/releases/tag/v1.0.1
 [1.0.0]: https://github.com/briangershon/planning-poker/releases/tag/v1.0.0
