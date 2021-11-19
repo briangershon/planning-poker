@@ -14,6 +14,7 @@ import {
   vote,
   updateStory,
   updatePlayers,
+  resetGame,
 } from '../store/pokerSlice';
 
 import { WebsocketClient } from '../lib/websocket_client';
@@ -60,6 +61,7 @@ function PlayGame() {
 
   useEffect(() => {
     initWebsocket();
+    dispatch(resetGame());
   }, []);
 
   function refresh() {

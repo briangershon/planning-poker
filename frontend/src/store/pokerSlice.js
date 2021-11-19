@@ -34,6 +34,9 @@ export const pokerSlice = createSlice({
     updateStory: (state, action) => {
       state.story = action.payload;
     },
+    resetGame: () => {
+      return initialState;
+    },
   },
 });
 
@@ -44,6 +47,7 @@ export const {
   vote,
   updateStory,
   updatePlayers,
+  resetGame,
 } = pokerSlice.actions;
 
 export default pokerSlice.reducer;
