@@ -99,9 +99,16 @@ export class GameDO {
                 const { id } = user;
                 await this.state.storage.put(`VOTE|${id}`, newVote);
 
-                // TODO: if there are at least 2 players (votes), and everyone has voted
-                // set gameState to 'complete'
-
+                // 'complete' game if all votes are in and at least 2 players
+                const votes = Array.from(
+                  await this.state.storage.list({ prefix: 'VOTE|' })
+                );
+                const invalidVotes = votes.filter(vote => {
+                  return vote[1] === null;
+                });
+                if (votes.length > 1 && invalidVotes.length === 0) {
+                  await this.state.storage.put('gameState', 'complete');
+                }
                 this.sockets.broadcastExceptSender(mySocket, {
                   eventId: 'game-state-change'
                 });
