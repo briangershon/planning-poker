@@ -36,7 +36,7 @@ export class AuthUser {
     }
     await this.env.USER.put(
       user.id,
-      JSON.stringify({ name, avatarUrl, token })
+      JSON.stringify({ name, avatarUrl, token, login })
     );
   }
 }
