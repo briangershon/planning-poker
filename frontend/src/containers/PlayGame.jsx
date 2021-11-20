@@ -45,6 +45,10 @@ function PlayGame() {
         // socket just letting us know something changed, we'll fetch the updated data ourselves
         refresh();
         break;
+      case 'game-delete':
+        window.alert('This game has been deleted.');
+        history.push(`/`);
+        break;
       default:
         console.log('unknown incoming websocket event', event);
     }
@@ -91,11 +95,9 @@ function PlayGame() {
 
   async function deleteCurrentGame() {
     if (confirm('Are you sure you want to delete?')) {
-      const response = await fetch(`${SITE_URL}/api/games/${gameId}`, {
-        method: 'DELETE',
-      });
-      history.push(`/`);
+      ws.current.deleteGame();
       dispatch(deleteGameId(gameId));
+      history.push(`/`);
     }
   }
 

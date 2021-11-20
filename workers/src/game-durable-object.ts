@@ -6,6 +6,9 @@ interface Env {
     get(key: string, options: Object): Promise<any>;
     put(key: string, value: string): Promise<void>;
   };
+  GAME: {
+    delete(key: string): Promise<void>;
+  };
 }
 
 interface State {
@@ -35,10 +38,6 @@ export class GameDO {
     let url = new URL(request.url);
 
     switch (url.pathname) {
-      case '/deallocate':
-        await this.state.storage.deleteAll();
-        break;
-
       case '/api/ws/':
         const upgradeHeader = request.headers.get('Upgrade');
         if (upgradeHeader !== 'websocket') {
@@ -78,7 +77,6 @@ export class GameDO {
           // process message
           switch (eventId) {
             case 'update-game-state':
-              console.log(eventData);
               await this.state.storage.put('gameState', eventData);
               this.sockets.broadcastExceptSender(mySocket, {
                 eventId: 'game-state-change'
@@ -136,6 +134,16 @@ export class GameDO {
               this.sockets.broadcastExceptSender(mySocket, {
                 eventId: 'game-state-change'
               });
+              break;
+
+            case 'delete-game':
+              await this.state.storage.deleteAll();
+              this.sockets.broadcastExceptSender(mySocket, {
+                eventId: 'game-delete'
+              });
+
+              const { id } = user;
+              await this.env.GAME.delete(`${id}:${gameId}`);
               break;
 
             default:

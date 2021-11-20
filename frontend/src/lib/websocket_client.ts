@@ -99,4 +99,19 @@ export class WebsocketClient {
     this.websocket.send(JSON.stringify(message));
     console.log('sent message to server', message);
   }
+
+  deleteGame() {
+    if (!this.initialized) {
+      console.log('Websocket not initialized: Can not send story.');
+      return;
+    }
+    const message = {
+      sessionId: this.sessionId,
+      gameId: this.gameId,
+      eventId: 'delete-game',
+    };
+    this.websocket.send(JSON.stringify(message));
+    console.log('sent message to server', message);
+  }
+
 }
