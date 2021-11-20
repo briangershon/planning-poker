@@ -5,7 +5,6 @@ import { deleteGameId } from '../store/userSlice';
 import Cookies from 'js-cookie';
 
 import Players from '../components/Players';
-import styles from './PlayGame.module.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -21,7 +20,6 @@ import { WebsocketClient } from '../lib/websocket_client';
 
 import { GameStory } from '../components/GameStory';
 import { GameInvite } from '../components/GameInvite';
-import { GameView } from '../components/GameView';
 import { GameVote } from '../components/GameVote';
 
 function PlayGame() {
@@ -125,46 +123,15 @@ function PlayGame() {
         <div>
           <h2>1. Story</h2>
           <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
+
           <h2>2. Invite</h2>
           <GameInvite
             relativeGameInviteUrl={relativeGameInviteUrl}
             gameInviteUrl={gameInviteUrl}
           />
-          {/* <h2>3. Cast your vote</h2>
-          <GameVote />
-          <GameView /> */}
 
           <h2>3. Cast your vote</h2>
-          <div>
-            {/* <p>Vote here:</p> */}
-            <ul className={styles.vote}>
-              <li>
-                <button onClick={() => sendVote('XS')}>XS</button>
-              </li>
-              <li>
-                <button onClick={() => sendVote('S')}>S</button>
-              </li>
-              <li>
-                <button onClick={() => sendVote('M')}>M</button>
-              </li>
-              <li>
-                <button onClick={() => sendVote('L')}>L</button>
-              </li>
-              <li>
-                <button onClick={() => sendVote('XL')}>XL</button>
-              </li>
-              <li>
-                <button onClick={() => sendVote('XXL')}>XXL</button>
-              </li>
-              <li>
-                <button onClick={() => sendVote('?')}>?</button>
-              </li>
-              <li>
-                <button onClick={() => sendVote(null)}>Clear</button>
-              </li>
-            </ul>
-          </div>
-
+          <GameVote sendVote={sendVote} />
           <Players
             you={game.you}
             players={game.players}

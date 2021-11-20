@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../containers/PlayGame.module.css';
+import styles from './GameStory.module.css';
 
 export function GameStory({ story, sendStoryUpdate }) {
   const [storyEditBuffer, setStoryEditBuffer] = useState('');
