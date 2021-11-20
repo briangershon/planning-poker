@@ -16,7 +16,9 @@ export class WebsocketClient {
   }
 
   init() {
-    this.websocket = new WebSocket(`${this.url}?gameId=${encodeURI(this.gameId)}`);
+    this.websocket = new WebSocket(
+      `${this.url}?gameId=${encodeURI(this.gameId)}`
+    );
     try {
       if (!this.websocket) {
         throw new Error("Websocket: Server didn't accept websocket");
@@ -64,6 +66,35 @@ export class WebsocketClient {
       gameId: this.gameId,
       eventId: 'update-story',
       eventData: newStory,
+    };
+    this.websocket.send(JSON.stringify(message));
+    console.log('sent message to server', message);
+  }
+
+  restartGame() {
+    if (!this.initialized) {
+      console.log('Websocket not initialized: Can not send story.');
+      return;
+    }
+    const message = {
+      sessionId: this.sessionId,
+      gameId: this.gameId,
+      eventId: 'restart-game',
+    };
+    this.websocket.send(JSON.stringify(message));
+    console.log('sent message to server', message);
+  }
+
+  updateGameState(newState) {
+    if (!this.initialized) {
+      console.log('Websocket not initialized: Can not send story.');
+      return;
+    }
+    const message = {
+      sessionId: this.sessionId,
+      gameId: this.gameId,
+      eventId: 'update-game-state',
+      eventData: newState,
     };
     this.websocket.send(JSON.stringify(message));
     console.log('sent message to server', message);

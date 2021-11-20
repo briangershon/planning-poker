@@ -8,12 +8,14 @@ import Players from '../components/Players';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  showCards,
-  hideCards,
   vote,
   updateStory,
   updatePlayers,
   resetGame,
+  startGame,
+  endGame,
+  clearAllVotes,
+  updateGameState,
 } from '../store/pokerSlice';
 
 import { WebsocketClient } from '../lib/websocket_client';
@@ -71,6 +73,7 @@ function PlayGame() {
       .then((response) => response.json())
       .then((data) => {
         if (data !== null) {
+          dispatch(updateGameState(data.gameState));
           dispatch(updateStory(data.story));
           dispatch(updatePlayers(data.votes));
           dispatch(vote(data.you.vote));
@@ -106,6 +109,21 @@ function PlayGame() {
     dispatch(vote(voteCasted));
   }
 
+  function beginGame() {
+    ws.current.updateGameState('in-progress');
+    dispatch(startGame());
+  }
+
+  function completeGame() {
+    ws.current.updateGameState('complete');
+    dispatch(endGame());
+  }
+
+  function restartGame() {
+    ws.current.restartGame();
+    dispatch(clearAllVotes());
+  }
+
   const relativeGameInviteUrl = `/games/${gameId}`;
   const gameInviteUrl = `${SITE_URL}/games/${gameId}`;
   const loginWithRedirect = `/api/login/github?redirect=${gameInviteUrl}`;
@@ -121,30 +139,68 @@ function PlayGame() {
 
       {isLoggedIn && (
         <div>
-          <h2>1. Story</h2>
-          <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
+          {game.gameState === 'lobby' && (
+            <>
+              <div>
+                <strong>
+                  Please add the story you want to estimate, invite players,
+                  then <em>Start Game</em>.
+                </strong>
+              </div>
 
-          <h2>2. Invite</h2>
-          <GameInvite
-            relativeGameInviteUrl={relativeGameInviteUrl}
-            gameInviteUrl={gameInviteUrl}
-          />
+              <h2>Story</h2>
+              <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
-          <h2>3. Cast your vote</h2>
-          <GameVote sendVote={sendVote} />
-          <Players
-            you={game.you}
-            players={game.players}
-            showCards={game.showCards}
-          />
+              <h2>Invite</h2>
+              <GameInvite
+                relativeGameInviteUrl={relativeGameInviteUrl}
+                gameInviteUrl={gameInviteUrl}
+              />
 
-          <div>
-            {game.showCards ? (
-              <button onClick={() => dispatch(hideCards())}>Hide Cards</button>
-            ) : (
-              <button onClick={() => dispatch(showCards())}>Show Cards</button>
-            )}
-          </div>
+              <h2>Play Game</h2>
+              <div>
+                <button onClick={beginGame}>Start Game</button>
+              </div>
+            </>
+          )}
+
+          {game.gameState === 'in-progress' && (
+            <>
+              <h2>Story</h2>
+              <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
+
+              <h2>Cast your vote</h2>
+              <GameVote sendVote={sendVote} />
+              <Players
+                you={game.you}
+                players={game.players}
+                showCards={false}
+              />
+
+              <div>
+                <p>
+                  Votes will be revealed once everyone has voted. You can also
+                  manually end the game here.
+                </p>
+                <button onClick={completeGame}>End Game</button>
+              </div>
+            </>
+          )}
+
+          {game.gameState === 'complete' && (
+            <>
+              <h2>Story</h2>
+              <GameStory story={game.story} />
+
+              <h2>Final Results</h2>
+
+              <Players you={game.you} players={game.players} showCards={true} />
+
+              <div>
+                <button onClick={restartGame}>Restart Game</button>
+              </div>
+            </>
+          )}
 
           <hr />
           <div>

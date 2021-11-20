@@ -30,17 +30,21 @@ export function GameStory({ story, sendStoryUpdate }) {
           <strong>Please add a story.</strong>
         )}
       </div>
-      <div>
-        Update story description:{' '}
-        <input
-          disabled={isUpdatingStory}
-          value={storyEditBuffer}
-          onChange={updateStoryBuffer}
-        />{' '}
-        <button disabled={isUpdatingStory} onClick={sendUpdate}>
-          Update
-        </button>
-      </div>
+
+      {/* if callback not passed in, assume we're read-only */}
+      {sendStoryUpdate && (
+        <div>
+          Update story description:{' '}
+          <input
+            disabled={isUpdatingStory}
+            value={storyEditBuffer}
+            onChange={updateStoryBuffer}
+          />{' '}
+          <button disabled={isUpdatingStory} onClick={sendUpdate}>
+            Update
+          </button>
+        </div>
+      )}
     </div>
   );
 }

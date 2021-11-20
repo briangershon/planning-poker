@@ -12,6 +12,7 @@ interface State {
   storage: {
     get(key: string): Promise<any>;
     put(key: string, value: string): Promise<void>;
+    delete(key: string): Promise<any>;
     deleteAll(): Promise<void>;
     list(options: Object): Promise<Map<string, any>>;
   };
@@ -76,6 +77,14 @@ export class GameDO {
 
           // process message
           switch (eventId) {
+            case 'update-game-state':
+              console.log(eventData);
+              await this.state.storage.put('gameState', eventData);
+              this.sockets.broadcastExceptSender(mySocket, {
+                eventId: 'game-state-change'
+              });
+              break;
+
             case 'vote':
               let newVote = eventData;
 
@@ -89,7 +98,13 @@ export class GameDO {
 
                 const { id } = user;
                 await this.state.storage.put(`VOTE|${id}`, newVote);
-                this.sockets.broadcastExceptSender(mySocket, { eventId: 'game-state-change' });
+
+                // TODO: if there are at least 2 players (votes), and everyone has voted
+                // set gameState to 'complete'
+
+                this.sockets.broadcastExceptSender(mySocket, {
+                  eventId: 'game-state-change'
+                });
               }
               break;
 
@@ -98,8 +113,22 @@ export class GameDO {
 
               if (newStory !== 'undefined') {
                 await this.state.storage.put('story', newStory);
-                this.sockets.broadcastExceptSender(mySocket, { eventId: 'game-state-change' });
+                this.sockets.broadcastExceptSender(mySocket, {
+                  eventId: 'game-state-change'
+                });
               }
+              break;
+
+            case 'restart-game':
+              // loop through all votes and remove them, set state back to 'lobby'
+              const votes = await this.state.storage.list({ prefix: 'VOTE|' });
+              for (let key of Array.from(votes.keys())) {
+                await this.state.storage.delete(key);
+              }
+              await this.state.storage.put('gameState', 'lobby');
+              this.sockets.broadcastExceptSender(mySocket, {
+                eventId: 'game-state-change'
+              });
               break;
 
             default:
@@ -148,6 +177,7 @@ export class GameDO {
 
         return new Response(
           JSON.stringify({
+            gameState: (await this.state.storage.get('gameState')) || 'lobby',
             story: await this.state.storage.get('story'),
             votes: votes,
             you
