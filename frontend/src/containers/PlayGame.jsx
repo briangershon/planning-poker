@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 const { SITE_URL, WEBSOCKET_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
 import Cookies from 'js-cookie';
@@ -19,13 +19,15 @@ import {
 
 import { WebsocketClient } from '../lib/websocket_client';
 
+import { GameStory } from '../components/GameStory';
+import { GameInvite } from '../components/GameInvite';
+import { GameView } from '../components/GameView';
+import { GameVote } from '../components/GameVote';
+
 function PlayGame() {
   const game = useSelector((state) => state.poker);
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-
-  const [storyEditBuffer, setStoryEditBuffer] = useState('');
-  const [isUpdatingStory, setUpdatingStory] = useState(false);
 
   let { gameId } = useParams();
 
@@ -96,17 +98,9 @@ function PlayGame() {
     }
   }
 
-  async function updateStoryBuffer(event) {
-    const newStory = event.target.value;
-    setStoryEditBuffer(newStory);
-  }
-
-  async function sendStoryUpdate() {
-    setUpdatingStory(true);
-    ws.current.sendStory(storyEditBuffer);
-    dispatch(updateStory(storyEditBuffer));
-    setStoryEditBuffer('');
-    setUpdatingStory(false);
+  async function sendStoryUpdate(story) {
+    ws.current.sendStory(story);
+    dispatch(updateStory(story));
   }
 
   async function sendVote(voteCasted) {
@@ -129,36 +123,16 @@ function PlayGame() {
 
       {isLoggedIn && (
         <div>
-          <h2>1. Invite</h2>
-          <div className={styles.inviteLink}>
-            Invite others by sending them to:{' '}
-            <Link to={relativeGameInviteUrl}>{gameInviteUrl}</Link>
-          </div>
-
-          <h2>2. Story</h2>
-
-          <div className={styles.story}>
-            <p>What story are you estimating?</p>
-
-            {game.story ? (
-              <div>
-                Story description: <strong>{game.story}</strong>
-              </div>
-            ) : (
-              <strong>Please add a story.</strong>
-            )}
-          </div>
-          <div>
-            Update story description:{' '}
-            <input
-              disabled={isUpdatingStory}
-              value={storyEditBuffer}
-              onChange={updateStoryBuffer}
-            />{' '}
-            <button disabled={isUpdatingStory} onClick={sendStoryUpdate}>
-              Update
-            </button>
-          </div>
+          <h2>1. Story</h2>
+          <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
+          <h2>2. Invite</h2>
+          <GameInvite
+            relativeGameInviteUrl={relativeGameInviteUrl}
+            gameInviteUrl={gameInviteUrl}
+          />
+          {/* <h2>3. Cast your vote</h2>
+          <GameVote />
+          <GameView /> */}
 
           <h2>3. Cast your vote</h2>
           <div>
