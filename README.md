@@ -107,6 +107,16 @@ Workflow:
 - Poll for updates
 - Only creator of game can delete it, albeit `delete` button shows up for all users.
 
+## How is this project organized?
+
+- `/frontend` for static React site.
+
+  - `./src/containers` are components that pull in data from websockets, redux, api calls.
+  - `./src/components` should be presentation-only React components.
+  - `./src/lib` code modules that don't have a UI
+
+- `/workers` for back-end Cloudflare code.
+
 ## FAQs
 
 ### When running locally, I see a "TypeError"

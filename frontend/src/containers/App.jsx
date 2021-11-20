@@ -11,7 +11,7 @@ import {
 import styles from './App.module.css';
 
 import HomePage from './HomePage';
-import AboutPage from './AboutPage';
+import AboutPage from '../components/AboutPage';
 
 import PlayGame from './PlayGame';
 

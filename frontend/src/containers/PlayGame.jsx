@@ -4,7 +4,7 @@ const { SITE_URL, WEBSOCKET_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
 import Cookies from 'js-cookie';
 
-import Players from './Players';
+import Players from '../components/Players';
 import styles from './PlayGame.module.css';
 
 import { useSelector, useDispatch } from 'react-redux';
