@@ -40,7 +40,7 @@ export class WebsocketClient {
     }
   }
 
-  sendVote(vote) {
+  sendEvent(eventId: string, eventData?: string | Object) {
     if (!this.initialized) {
       console.log('Websocket not initialized: Can not send vote.');
       return;
@@ -49,69 +49,30 @@ export class WebsocketClient {
     const message = {
       sessionId: this.sessionId,
       gameId: this.gameId,
-      eventId: 'vote',
-      eventData: vote,
+      eventId,
+      eventData,
     };
     this.websocket.send(JSON.stringify(message));
     console.log('sent message to server', message);
+  }
+
+  sendVote(vote) {
+    this.sendEvent('vote', vote);
   }
 
   sendStory(newStory) {
-    if (!this.initialized) {
-      console.log('Websocket not initialized: Can not send story.');
-      return;
-    }
-    const message = {
-      sessionId: this.sessionId,
-      gameId: this.gameId,
-      eventId: 'update-story',
-      eventData: newStory,
-    };
-    this.websocket.send(JSON.stringify(message));
-    console.log('sent message to server', message);
+    this.sendEvent('update-story', newStory);
   }
 
   restartGame() {
-    if (!this.initialized) {
-      console.log('Websocket not initialized: Can not send story.');
-      return;
-    }
-    const message = {
-      sessionId: this.sessionId,
-      gameId: this.gameId,
-      eventId: 'restart-game',
-    };
-    this.websocket.send(JSON.stringify(message));
-    console.log('sent message to server', message);
+    this.sendEvent('restart-game');
   }
 
   updateGameState(newState) {
-    if (!this.initialized) {
-      console.log('Websocket not initialized: Can not send story.');
-      return;
-    }
-    const message = {
-      sessionId: this.sessionId,
-      gameId: this.gameId,
-      eventId: 'update-game-state',
-      eventData: newState,
-    };
-    this.websocket.send(JSON.stringify(message));
-    console.log('sent message to server', message);
+    this.sendEvent('update-game-state', newState);
   }
 
   deleteGame() {
-    if (!this.initialized) {
-      console.log('Websocket not initialized: Can not send story.');
-      return;
-    }
-    const message = {
-      sessionId: this.sessionId,
-      gameId: this.gameId,
-      eventId: 'delete-game',
-    };
-    this.websocket.send(JSON.stringify(message));
-    console.log('sent message to server', message);
+    this.sendEvent('delete-game');
   }
-
 }
