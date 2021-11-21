@@ -16,6 +16,7 @@ import {
   endGame,
   clearAllVotes,
   updateGameState,
+  updateYou,
 } from '../store/pokerSlice';
 
 import { WebsocketClient } from '../lib/websocket_client';
@@ -23,6 +24,7 @@ import { WebsocketClient } from '../lib/websocket_client';
 import { GameStory } from '../components/GameStory';
 import { GameInvite } from '../components/GameInvite';
 import { GameVote } from '../components/GameVote';
+import { Invitees } from '../components/Invitees';
 
 function PlayGame() {
   const game = useSelector((state) => state.poker);
@@ -38,9 +40,6 @@ function PlayGame() {
   function onMessage(data) {
     const { eventId, eventData } = data;
     switch (eventId) {
-      case 'debug':
-        console.log(eventData);
-        break;
       case 'game-state-change':
         // socket just letting us know something changed, we'll fetch the updated data ourselves
         refresh();
@@ -68,6 +67,7 @@ function PlayGame() {
   useEffect(() => {
     initWebsocket();
     dispatch(resetGame());
+    refresh();
   }, []);
 
   function refresh() {
@@ -80,18 +80,13 @@ function PlayGame() {
           dispatch(updateGameState(data.gameState));
           dispatch(updateStory(data.story));
           dispatch(updatePlayers(data.votes));
-          dispatch(vote(data.you.vote));
+          dispatch(updateYou(data.you));
         }
       })
       .catch((e) => {
         console.log('server error', e);
       });
   }
-
-  // refresh all game data when page first loads
-  useEffect(() => {
-    refresh();
-  }, []);
 
   async function deleteCurrentGame() {
     if (confirm('Are you sure you want to delete?')) {
@@ -144,10 +139,8 @@ function PlayGame() {
           {game.gameState === 'lobby' && (
             <>
               <div>
-                <strong>
-                  Please add the story you want to estimate, invite players,
-                  then <em>Start Game</em>.
-                </strong>
+                Please add the story you want to estimate, invite players, then{' '}
+                <em>Start Game</em>.
               </div>
 
               <h2>Story</h2>
@@ -158,10 +151,11 @@ function PlayGame() {
                 relativeGameInviteUrl={relativeGameInviteUrl}
                 gameInviteUrl={gameInviteUrl}
               />
+              <Invitees you={game.you} players={game.players} />
 
               <h2>Play Game</h2>
               <div>
-                <button onClick={beginGame}>Start Game</button>
+                <button onClick={beginGame} disabled={game.players.length === 0}>Start Game</button>
               </div>
             </>
           )}

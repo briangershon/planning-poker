@@ -1,0 +1,18 @@
+.ul {
+  /* color: blue; */
+  padding: 0;
+  list-style-type: none;
+}
+
+.li {
+  display: inline-block;
+  padding: 16px;
+  margin: 10px;
+  text-align: center;
+}
+
+.li img {
+  border-radius: 4em;
+  border: 3px solid #e4572e;
+  vertical-align: middle;
+}

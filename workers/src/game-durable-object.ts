@@ -57,12 +57,6 @@ export class GameDO {
         });
 
         server.addEventListener('message', async event => {
-          // server.send(
-          //   JSON.stringify({
-          //     eventId: 'debug',
-          //     eventData: 'message received for game' + event.data
-          //   })
-          // );
           const { sessionId, gameId, eventId, eventData } = JSON.parse(
             event.data
           );
@@ -161,9 +155,13 @@ export class GameDO {
         const { id } = JSON.parse(url.searchParams.get('user'));
         const rawVotes = Object.fromEntries(voteList);
 
-        // Strip out current user, just sent votes back from other players
+        const youInfo = await this.env.USER.get(id, {
+          type: 'json'
+        });
+
         let you = {
-          vote: null
+          vote: null,
+          avatarUrl: youInfo.avatarUrl
         };
         let votes = [];
 
@@ -173,9 +171,6 @@ export class GameDO {
 
           // update "you"
           if (key === `VOTE|${id}`) {
-            const userInfo = await this.env.USER.get(id, {
-              type: 'json'
-            });
             you.vote = rawVotes[key];
           }
 
@@ -186,7 +181,12 @@ export class GameDO {
             const userInfo = await this.env.USER.get(playerId, {
               type: 'json'
             });
-            votes.push({ name: userInfo.name, vote: rawVotes[key] });
+
+            votes.push({
+              name: userInfo.name,
+              vote: rawVotes[key],
+              avatarUrl: userInfo.avatarUrl
+            });
           }
         }
 
@@ -206,11 +206,5 @@ export class GameDO {
       default:
         return new Response('Not found', { status: 404 });
     }
-
-    return new Response(JSON.stringify({ status: 'ok' }), {
-      headers: {
-        'content-type': 'application/json;charset=UTF-8'
-      }
-    });
   }
 }

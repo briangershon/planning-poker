@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  you: { name: 'You', vote: null },
+  you: { name: 'You', vote: null, avatarUrl: null },
   players: [],
   story: '',
   gameState: 'lobby',
@@ -41,6 +41,9 @@ export const pokerSlice = createSlice({
         state.gameState = 'complete';
       }
     },
+    updateYou: (state, action) => {
+      state.you.avatarUrl = action.payload.avatarUrl;
+    },
     updateStory: (state, action) => {
       state.story = action.payload;
     },
@@ -66,9 +69,8 @@ export const pokerSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  // showCards,
-  // hideCards,
   vote,
+  updateYou,
   updateStory,
   updatePlayers,
   resetGame,
