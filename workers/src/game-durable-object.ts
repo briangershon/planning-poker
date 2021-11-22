@@ -1,4 +1,4 @@
-import { getCurrentUserFromSessionId } from './auth';
+import { getCurrentUserFromSessionId, getCurrentUserFromCookie } from './auth';
 import { WebSocketServer } from './websocket/websocket-server';
 
 interface Env {
@@ -19,6 +19,12 @@ interface State {
     deleteAll(): Promise<void>;
     list(options: Object): Promise<Map<string, any>>;
   };
+}
+
+interface UserMetadata {
+  id: string;
+  name: string;
+  avatarUrl: string;
 }
 
 export class GameDO {
@@ -43,6 +49,16 @@ export class GameDO {
         if (upgradeHeader !== 'websocket') {
           return new Response('Expected websocket', { status: 400 });
         }
+
+        let metadata: UserMetadata = { id: '', name: '', avatarUrl: '' };
+        const loggedInUser = await getCurrentUserFromCookie(request, this.env);
+        if (loggedInUser) {
+          const { id, name, avatarUrl } = loggedInUser;
+          metadata.id = id;
+          metadata.name = name;
+          metadata.avatarUrl = avatarUrl;
+        }
+        console.log('Logged in user metadata:', metadata);
 
         const [client, server] = Object.values(new WebSocketPair());
 

@@ -41,7 +41,8 @@ function PlayGame() {
     const { eventId, eventData } = data;
     switch (eventId) {
       case 'game-state-change':
-        // socket just letting us know something changed, we'll fetch the updated data ourselves
+        // socket just letting us know something changed
+        // we'll fetch the updated data ourselves via http
         refresh();
         break;
       case 'game-delete':
@@ -155,7 +156,12 @@ function PlayGame() {
 
               <h2>Play Game</h2>
               <div>
-                <button onClick={beginGame} disabled={game.players.length === 0}>Start Game</button>
+                <button
+                  onClick={beginGame}
+                  disabled={game.players.length === 0}
+                >
+                  Start Game
+                </button>
               </div>
             </>
           )}
