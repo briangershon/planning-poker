@@ -30,10 +30,95 @@ interface PlayerPrivateMetadata {
   avatarUrl: string;
 }
 
+interface PlayerPrivateMetadataWithVote {
+  id: string;
+  name: string;
+  vote: string | null;
+  avatarUrl: string;
+}
+
 interface PlayerPublicMetadata {
   name: string;
   vote: string | null;
   avatarUrl: string;
+}
+
+interface VoteResults {
+  youVote: string | null;
+  otherVotes: PlayerPrivateMetadataWithVote[];
+}
+
+async function calculateVotes(
+  voteList,
+  youId: string,
+  env
+): Promise<VoteResults> {
+  const rawVotes = Object.fromEntries(voteList);
+
+  let youVote = null;
+  let votes: PlayerPrivateMetadataWithVote[] = [];
+
+  const userKeys = Object.keys(rawVotes);
+  for (let i = 0; i < userKeys.length; i++) {
+    let key = userKeys[i];
+
+    // update "you"
+    if (key === `VOTE|${youId}`) {
+      youVote = rawVotes[key];
+    }
+
+    // update other players
+    if (key !== `VOTE|${youId}`) {
+      // convert IDs to names
+      const playerId = key.slice(-(key.length - 'VOTE|'.length));
+      const userInfo = await env.USER.get(playerId, {
+        type: 'json'
+      });
+
+      votes.push({
+        id: playerId,
+        name: userInfo.name,
+        vote: rawVotes[key],
+        avatarUrl: userInfo.avatarUrl
+      });
+    }
+  }
+
+  return { youVote, otherVotes: votes };
+}
+
+function calculatePlayersPresent({
+  you,
+  votes,
+  allPlayersPresent
+}: {
+  you: PlayerPrivateMetadata;
+  votes;
+  allPlayersPresent: PlayerPrivateMetadata[];
+}): PlayerPublicMetadata[] {
+  // Return an array of other users that are present but haven't voted.
+  // Remove duplicates, remove current user, remove any that already have votes
+  // const allSocketUsers: PlayerPrivateMetadata = this.sockets.allMetadata();
+
+  let playersPresent: PlayerPublicMetadata[] = [];
+  // const allPlayerMetadata = this.sockets.allMetadata() as PlayerPrivateMetadata[];
+
+  for (let i = 0; i < allPlayersPresent.length; i++) {
+    let p = allPlayersPresent[i];
+    // skip YOU
+    if (p.id === you.id) continue;
+
+    // TODO: FILTER OUT THOSE WHO HAVE VOTED
+
+    // return public properties, so exclude 'id'
+    playersPresent.push({
+      name: p.name,
+      avatarUrl: p.avatarUrl,
+      vote: null
+    });
+  }
+
+  return playersPresent;
 }
 
 export class GameDO {
@@ -146,12 +231,37 @@ export class GameDO {
                 await this.state.storage.put(`VOTE|${id}`, newVote);
 
                 // 'complete' game if all votes are in and at least 2 players
+                // and there are no more players present
+                const voteList = await this.state.storage.list({
+                  prefix: 'VOTE|'
+                });
+
+                const { youVote, otherVotes } = await calculateVotes(
+                  voteList,
+                  id,
+                  this.env
+                );
+
+                const you = {
+                  id: user.id,
+                  name: user.name,
+                  vote: youVote,
+                  avatarUrl: user.avatarUrl
+                };
+
+                const totalPlayers = calculatePlayersPresent({
+                  you,
+                  votes: otherVotes,
+                  allPlayersPresent: this.sockets.allMetadata() as PlayerPrivateMetadata[]
+                });
+
                 const votes = Array.from(
                   await this.state.storage.list({ prefix: 'VOTE|' })
                 );
                 const invalidVotes = votes.filter(vote => {
                   return vote[1] === null;
                 });
+
                 if (votes.length > 1 && invalidVotes.length === 0) {
                   await this.state.storage.put('gameState', 'complete');
                 }
@@ -207,65 +317,29 @@ export class GameDO {
       case '/':
         const voteList = await this.state.storage.list({ prefix: 'VOTE|' });
         const { id } = JSON.parse(url.searchParams.get('user'));
-        const rawVotes = Object.fromEntries(voteList);
 
         const youInfo = await this.env.USER.get(id, {
           type: 'json'
         });
-        youInfo.id = id;
 
         let you = {
-          id: youInfo.id,
+          id: id,
           name: youInfo.name,
           vote: null,
           avatarUrl: youInfo.avatarUrl
         };
-        let votes = [];
 
-        const userKeys = Object.keys(rawVotes);
-        for (let i = 0; i < userKeys.length; i++) {
-          let key = userKeys[i];
+        const { youVote, otherVotes } = await calculateVotes(
+          voteList,
+          id,
+          this.env
+        );
 
-          // update "you"
-          if (key === `VOTE|${id}`) {
-            you.vote = rawVotes[key];
-          }
+        const publicVotes = otherVotes.map(v => {
+          return { name: v.name, vote: v.vote, avatarUrl: v.avatarUrl };
+        });
 
-          // update other players
-          if (key !== `VOTE|${id}`) {
-            // convert IDs to names
-            const playerId = key.slice(-(key.length - 'VOTE|'.length));
-            const userInfo = await this.env.USER.get(playerId, {
-              type: 'json'
-            });
-
-            votes.push({
-              name: userInfo.name,
-              vote: rawVotes[key],
-              avatarUrl: userInfo.avatarUrl
-            });
-          }
-        }
-
-        // Return an array of other users that are present but haven't voted.
-        // Remove ID field, remove duplicates, remove current user, remove any that already have votes
-        // const allSocketUsers: PlayerPrivateMetadata = this.sockets.allMetadata();
-
-        let playersPresent: PlayerPublicMetadata[] = [];
-        const allPlayerMetadata = this.sockets.allMetadata() as PlayerPrivateMetadata[];
-
-        for (let i = 0; i < allPlayerMetadata.length; i++) {
-          let p = allPlayerMetadata[i];
-          // skip YOU
-          if (p.id === you.id) continue;
-
-          // return public properties, so exclude 'id'
-          playersPresent.push({
-            name: p.name,
-            avatarUrl: p.avatarUrl,
-            vote: null
-          });
-        }
+        you.vote = youVote;
 
         // return public properties, so exclude 'id'
         const publicYou: PlayerPublicMetadata = {
@@ -278,9 +352,13 @@ export class GameDO {
           JSON.stringify({
             gameState: (await this.state.storage.get('gameState')) || 'lobby',
             story: await this.state.storage.get('story'),
-            votes: votes,
+            votes: publicVotes,
             you: publicYou,
-            playersPresent
+            playersPresent: calculatePlayersPresent({
+              you,
+              votes: otherVotes,
+              allPlayersPresent: this.sockets.allMetadata() as PlayerPrivateMetadata[]
+            })
           }),
           {
             headers: {

@@ -164,7 +164,7 @@ function PlayGame() {
               <div>
                 <button
                   onClick={beginGame}
-                  disabled={game.players.length === 0}
+                  disabled={game.playersPresent.length === 0}
                 >
                   Start Game
                 </button>
