@@ -40,6 +40,10 @@ export class WebsocketClient {
     }
   }
 
+  close() {
+    this.websocket.close();
+  }
+
   sendEvent(eventId: string, eventData?: string | Object) {
     if (!this.initialized) {
       console.log('Websocket not initialized: Can not send vote.');

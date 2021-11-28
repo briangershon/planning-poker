@@ -1,5 +1,8 @@
 import { getCurrentUserFromSessionId, getCurrentUserFromCookie } from './auth';
-import { WebSocketServer } from './websocket/websocket-server';
+import {
+  WebSocketServer,
+  WebSocketSession
+} from './websocket/websocket-server';
 
 interface Env {
   USER: {
@@ -37,7 +40,18 @@ export class GameDO {
   constructor(state: State, env: Env) {
     this.state = state;
     this.env = env;
-    this.sockets = new WebSocketServer();
+
+    function onJoin(session) {
+      console.log('ON JOIN', session);
+    }
+    function onLeave(metadata) {
+      console.log('ON LEAVE', metadata);
+    }
+
+    this.sockets = new WebSocketServer({
+      onJoin,
+      onLeave
+    });
   }
 
   async fetch(request) {
@@ -58,11 +72,21 @@ export class GameDO {
           metadata.name = name;
           metadata.avatarUrl = avatarUrl;
         }
-        console.log('Logged in user metadata:', metadata);
 
-        const [client, server] = Object.values(new WebSocketPair());
+        // without declaring types for client and server, run time error was being raised
+        let client: CloudflareWebsocket;
+        let server: CloudflareWebsocket;
+        try {
+          [client, server] = Object.values(new WebSocketPair());
+        } catch (e) {
+          console.log('Unable to create websocket due to', e);
+        }
 
-        let mySocket = await this.sockets.handleSocket(server);
+        const session: WebSocketSession = { socket: server, metadata: {} };
+        let mySocket = await this.sockets.handleSocket({
+          socket: server,
+          metadata
+        });
 
         server.addEventListener('close', () => {
           console.log('websocket closed');
@@ -77,7 +101,7 @@ export class GameDO {
             event.data
           );
 
-          // retrieve and verify user
+          // retrieve and verify user for each message
           const user = await getCurrentUserFromSessionId(sessionId, this.env);
           if (!user) {
             console.log('invalid user');

@@ -69,6 +69,10 @@ function PlayGame() {
     initWebsocket();
     dispatch(resetGame());
     refresh();
+
+    return function cleanup() {
+      ws.current.close();
+    };
   }, []);
 
   function refresh() {
