@@ -56,13 +56,15 @@ export class WebSocketServer {
     try {
       session.socket.send(stringMessage);
     } catch (e) {
+      const sessionMetadata = session.metadata;
       // error sending messsage, remove this session
-      if (typeof this.onLeave !== 'undefined') {
-        this.onLeave(session.metadata);
-      }
       this.sessions = this.sessions.filter(s => {
         return session !== s;
       });
+      // call onLeave AFTER removed from sessions to avoid infinite loop
+      if (typeof this.onLeave !== 'undefined') {
+        this.onLeave(sessionMetadata);
+      }
     }
   }
 

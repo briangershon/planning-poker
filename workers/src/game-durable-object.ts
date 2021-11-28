@@ -24,9 +24,15 @@ interface State {
   };
 }
 
-interface UserMetadata {
+interface PlayerPrivateMetadata {
   id: string;
   name: string;
+  avatarUrl: string;
+}
+
+interface PlayerPublicMetadata {
+  name: string;
+  vote: string | null;
   avatarUrl: string;
 }
 
@@ -42,10 +48,14 @@ export class GameDO {
     this.env = env;
 
     function onJoin(session) {
-      console.log('ON JOIN', session);
+      this.broadcastExceptSender(session, {
+        eventId: 'game-state-change'
+      });
     }
     function onLeave(metadata) {
-      console.log('ON LEAVE', metadata);
+      this.broadcast({
+        eventId: 'game-state-change'
+      });
     }
 
     this.sockets = new WebSocketServer({
@@ -64,7 +74,11 @@ export class GameDO {
           return new Response('Expected websocket', { status: 400 });
         }
 
-        let metadata: UserMetadata = { id: '', name: '', avatarUrl: '' };
+        let metadata: PlayerPrivateMetadata = {
+          id: '',
+          name: '',
+          avatarUrl: ''
+        };
         const loggedInUser = await getCurrentUserFromCookie(request, this.env);
         if (loggedInUser) {
           const { id, name, avatarUrl } = loggedInUser;
@@ -198,8 +212,11 @@ export class GameDO {
         const youInfo = await this.env.USER.get(id, {
           type: 'json'
         });
+        youInfo.id = id;
 
         let you = {
+          id: youInfo.id,
+          name: youInfo.name,
           vote: null,
           avatarUrl: youInfo.avatarUrl
         };
@@ -230,12 +247,40 @@ export class GameDO {
           }
         }
 
+        // Return an array of other users that are present but haven't voted.
+        // Remove ID field, remove duplicates, remove current user, remove any that already have votes
+        // const allSocketUsers: PlayerPrivateMetadata = this.sockets.allMetadata();
+
+        let playersPresent: PlayerPublicMetadata[] = [];
+        const allPlayerMetadata = this.sockets.allMetadata() as PlayerPrivateMetadata[];
+
+        for (let i = 0; i < allPlayerMetadata.length; i++) {
+          let p = allPlayerMetadata[i];
+          // skip YOU
+          if (p.id === you.id) continue;
+
+          // return public properties, so exclude 'id'
+          playersPresent.push({
+            name: p.name,
+            avatarUrl: p.avatarUrl,
+            vote: null
+          });
+        }
+
+        // return public properties, so exclude 'id'
+        const publicYou: PlayerPublicMetadata = {
+          name: you.name,
+          vote: you.vote,
+          avatarUrl: you.avatarUrl
+        };
+
         return new Response(
           JSON.stringify({
             gameState: (await this.state.storage.get('gameState')) || 'lobby',
             story: await this.state.storage.get('story'),
             votes: votes,
-            you
+            you: publicYou,
+            playersPresent
           }),
           {
             headers: {

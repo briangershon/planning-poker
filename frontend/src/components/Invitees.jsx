@@ -17,7 +17,7 @@ export function Invitees({ you, players }) {
         {players.map((p) => {
           return (
             <li key={p.name} className={styles.li}>
-              {p.name}
+              <img src={p.avatarUrl} width="40" /> {p.name}{' '}
             </li>
           );
         })}

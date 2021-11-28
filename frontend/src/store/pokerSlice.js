@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   you: { name: 'You', vote: null, avatarUrl: null },
   players: [],
+  playersPresent: [],
   story: '',
   gameState: 'lobby',
 };
@@ -33,6 +34,17 @@ export const pokerSlice = createSlice({
 
       if (everyoneHasVoted(state)) {
         state.gameState = 'complete';
+      }
+    },
+    updatePlayersPresent: (state, action) => {
+      // avoid infinite loops by updating existing array
+      // clear array
+      for (let j = 0; j < state.playersPresent.length; j++) {
+        state.playersPresent.pop();
+      }
+      // then append to array
+      for (let i = 0; i < action.payload.length; i++) {
+        state.playersPresent.push(action.payload[i]);
       }
     },
     vote: (state, action) => {
@@ -73,6 +85,7 @@ export const {
   updateYou,
   updateStory,
   updatePlayers,
+  updatePlayersPresent,
   resetGame,
   startGame,
   endGame,

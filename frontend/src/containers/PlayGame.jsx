@@ -11,6 +11,7 @@ import {
   vote,
   updateStory,
   updatePlayers,
+  updatePlayersPresent,
   resetGame,
   startGame,
   endGame,
@@ -85,6 +86,7 @@ function PlayGame() {
           dispatch(updateGameState(data.gameState));
           dispatch(updateStory(data.story));
           dispatch(updatePlayers(data.votes));
+          dispatch(updatePlayersPresent(data.playersPresent));
           dispatch(updateYou(data.you));
         }
       })
@@ -156,7 +158,7 @@ function PlayGame() {
                 relativeGameInviteUrl={relativeGameInviteUrl}
                 gameInviteUrl={gameInviteUrl}
               />
-              <Invitees you={game.you} players={game.players} />
+              <Invitees you={game.you} players={game.playersPresent} />
 
               <h2>Play Game</h2>
               <div>
