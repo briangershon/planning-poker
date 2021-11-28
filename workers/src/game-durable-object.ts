@@ -3,6 +3,15 @@ import {
   WebSocketServer,
   WebSocketSession
 } from './websocket/websocket-server';
+import { GameState } from './gamelogic/gamestate';
+
+// TODO: Remove Type imports once this is moved into GameState object
+import {
+  VoteResults,
+  PlayerPrivateMetadataWithVote,
+  PlayerPrivateMetadata,
+  PlayerPublicMetadata
+} from './gamelogic/gamestate';
 
 interface Env {
   USER: {
@@ -22,30 +31,6 @@ interface State {
     deleteAll(): Promise<void>;
     list(options: Object): Promise<Map<string, any>>;
   };
-}
-
-interface PlayerPrivateMetadata {
-  id: string;
-  name: string;
-  avatarUrl: string;
-}
-
-interface PlayerPrivateMetadataWithVote {
-  id: string;
-  name: string;
-  vote: string | null;
-  avatarUrl: string;
-}
-
-interface PlayerPublicMetadata {
-  name: string;
-  vote: string | null;
-  avatarUrl: string;
-}
-
-interface VoteResults {
-  youVote: string | null;
-  otherVotes: PlayerPrivateMetadataWithVote[];
 }
 
 async function calculateVotes(
@@ -151,6 +136,7 @@ export class GameDO {
 
   async fetch(request) {
     let url = new URL(request.url);
+    let gameState;
 
     switch (url.pathname) {
       case '/api/ws/':
@@ -250,7 +236,10 @@ export class GameDO {
                 };
 
                 const totalPlayers = calculatePlayersPresent({
-                  you,
+                  you: {
+                    id: user.id,
+                    ...you
+                  },
                   votes: otherVotes,
                   allPlayersPresent: this.sockets.allMetadata() as PlayerPrivateMetadata[]
                 });
@@ -322,41 +311,40 @@ export class GameDO {
           type: 'json'
         });
 
-        let you = {
-          id: id,
-          name: youInfo.name,
-          vote: null,
-          avatarUrl: youInfo.avatarUrl
-        };
-
-        const { youVote, otherVotes } = await calculateVotes(
+        const env = this.env;
+        gameState = new GameState({
           voteList,
-          id,
-          this.env
-        );
-
-        const publicVotes = otherVotes.map(v => {
-          return { name: v.name, vote: v.vote, avatarUrl: v.avatarUrl };
+          loggedInPlayerId: id,
+          youInfo: {
+            id: id,
+            ...youInfo
+          },
+          onRetrievePlayer: async function retrievePlayer(playerId) {
+            const user = await env.USER.get(playerId, {
+              type: 'json'
+            });
+            return {
+              name: user.name,
+              avatarUrl: user.avatarUrl,
+              vote: undefined
+            };
+          }
         });
 
-        you.vote = youVote;
-
-        // return public properties, so exclude 'id'
-        const publicYou: PlayerPublicMetadata = {
-          name: you.name,
-          vote: you.vote,
-          avatarUrl: you.avatarUrl
-        };
+        const { you, votes } = await gameState.fullState();
 
         return new Response(
           JSON.stringify({
             gameState: (await this.state.storage.get('gameState')) || 'lobby',
             story: await this.state.storage.get('story'),
-            votes: publicVotes,
-            you: publicYou,
+            votes,
+            you,
             playersPresent: calculatePlayersPresent({
-              you,
-              votes: otherVotes,
+              you: {
+                id,
+                ...you
+              },
+              votes,
               allPlayersPresent: this.sockets.allMetadata() as PlayerPrivateMetadata[]
             })
           }),
