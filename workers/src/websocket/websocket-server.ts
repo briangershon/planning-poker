@@ -56,7 +56,7 @@ export class WebSocketServer {
     try {
       session.socket.send(stringMessage);
     } catch (e) {
-      const sessionMetadata = session.metadata;
+      const sessionMetadata = session ? session.metadata : null;
       // error sending messsage, remove this session
       this.sessions = this.sessions.filter(s => {
         return session !== s;
