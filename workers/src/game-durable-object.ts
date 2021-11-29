@@ -33,45 +33,6 @@ interface State {
   };
 }
 
-async function calculateVotes(
-  voteList,
-  youId: string,
-  env
-): Promise<VoteResults> {
-  const rawVotes = Object.fromEntries(voteList);
-
-  let youVote = null;
-  let votes: PlayerPrivateMetadataWithVote[] = [];
-
-  const userKeys = Object.keys(rawVotes);
-  for (let i = 0; i < userKeys.length; i++) {
-    let key = userKeys[i];
-
-    // update "you"
-    if (key === `VOTE|${youId}`) {
-      youVote = rawVotes[key];
-    }
-
-    // update other players
-    if (key !== `VOTE|${youId}`) {
-      // convert IDs to names
-      const playerId = key.slice(-(key.length - 'VOTE|'.length));
-      const userInfo = await env.USER.get(playerId, {
-        type: 'json'
-      });
-
-      votes.push({
-        id: playerId,
-        name: userInfo.name,
-        vote: rawVotes[key],
-        avatarUrl: userInfo.avatarUrl
-      });
-    }
-  }
-
-  return { youVote, otherVotes: votes };
-}
-
 function calculatePlayersPresent({
   you,
   votes,
@@ -134,9 +95,38 @@ export class GameDO {
     });
   }
 
+  async retrieveGameState(id) {
+    const voteList = await this.state.storage.list({ prefix: 'VOTE|' });
+
+    const youInfo = await this.env.USER.get(id, {
+      type: 'json'
+    });
+
+    const env = this.env;
+    const gameState = new GameState({
+      voteList,
+      loggedInPlayerId: id,
+      youInfo: {
+        id: id,
+        ...youInfo
+      },
+      onRetrievePlayer: async function retrievePlayer(playerId) {
+        const user = await env.USER.get(playerId, {
+          type: 'json'
+        });
+        return {
+          name: user.name,
+          avatarUrl: user.avatarUrl,
+          vote: undefined
+        };
+      }
+    });
+
+    return gameState.fullState();
+  }
+
   async fetch(request) {
     let url = new URL(request.url);
-    let gameState;
 
     switch (url.pathname) {
       case '/api/ws/':
@@ -218,35 +208,17 @@ export class GameDO {
 
                 // 'complete' game if all votes are in and at least 2 players
                 // and there are no more players present
-                const voteList = await this.state.storage.list({
-                  prefix: 'VOTE|'
-                });
-
-                const { youVote, otherVotes } = await calculateVotes(
-                  voteList,
-                  id,
-                  this.env
-                );
-
-                const you = {
-                  id: user.id,
-                  name: user.name,
-                  vote: youVote,
-                  avatarUrl: user.avatarUrl
-                };
+                const { you, votes } = await this.retrieveGameState(id);
 
                 const totalPlayers = calculatePlayersPresent({
                   you: {
                     id: user.id,
                     ...you
                   },
-                  votes: otherVotes,
+                  votes,
                   allPlayersPresent: this.sockets.allMetadata() as PlayerPrivateMetadata[]
                 });
 
-                const votes = Array.from(
-                  await this.state.storage.list({ prefix: 'VOTE|' })
-                );
                 const invalidVotes = votes.filter(vote => {
                   return vote[1] === null;
                 });
@@ -304,34 +276,8 @@ export class GameDO {
         });
 
       case '/':
-        const voteList = await this.state.storage.list({ prefix: 'VOTE|' });
         const { id } = JSON.parse(url.searchParams.get('user'));
-
-        const youInfo = await this.env.USER.get(id, {
-          type: 'json'
-        });
-
-        const env = this.env;
-        gameState = new GameState({
-          voteList,
-          loggedInPlayerId: id,
-          youInfo: {
-            id: id,
-            ...youInfo
-          },
-          onRetrievePlayer: async function retrievePlayer(playerId) {
-            const user = await env.USER.get(playerId, {
-              type: 'json'
-            });
-            return {
-              name: user.name,
-              avatarUrl: user.avatarUrl,
-              vote: undefined
-            };
-          }
-        });
-
-        const { you, votes } = await gameState.fullState();
+        const { you, votes } = await this.retrieveGameState(id);
 
         return new Response(
           JSON.stringify({
