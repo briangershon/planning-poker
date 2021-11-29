@@ -54,6 +54,8 @@ export const pokerSlice = createSlice({
       }
     },
     updateYou: (state, action) => {
+      state.you.name = action.payload.name;
+      state.you.vote = action.payload.vote;
       state.you.avatarUrl = action.payload.avatarUrl;
     },
     updateStory: (state, action) => {

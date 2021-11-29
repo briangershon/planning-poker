@@ -33,40 +33,6 @@ interface State {
   };
 }
 
-function calculatePlayersPresent({
-  you,
-  votes,
-  allPlayersPresent
-}: {
-  you: PlayerPrivateMetadata;
-  votes;
-  allPlayersPresent: PlayerPrivateMetadata[];
-}): PlayerPublicMetadata[] {
-  // Return an array of other users that are present but haven't voted.
-  // Remove duplicates, remove current user, remove any that already have votes
-  // const allSocketUsers: PlayerPrivateMetadata = this.sockets.allMetadata();
-
-  let playersPresent: PlayerPublicMetadata[] = [];
-  // const allPlayerMetadata = this.sockets.allMetadata() as PlayerPrivateMetadata[];
-
-  for (let i = 0; i < allPlayersPresent.length; i++) {
-    let p = allPlayersPresent[i];
-    // skip YOU
-    if (p.id === you.id) continue;
-
-    // TODO: FILTER OUT THOSE WHO HAVE VOTED
-
-    // return public properties, so exclude 'id'
-    playersPresent.push({
-      name: p.name,
-      avatarUrl: p.avatarUrl,
-      vote: null
-    });
-  }
-
-  return playersPresent;
-}
-
 export class GameDO {
   state: State;
   env: Env;
@@ -110,6 +76,7 @@ export class GameDO {
         id: id,
         ...youInfo
       },
+      allPlayersPresent: this.sockets.allMetadata() as PlayerPrivateMetadata[],
       onRetrievePlayer: async function retrievePlayer(playerId) {
         const user = await env.USER.get(playerId, {
           type: 'json'
@@ -208,24 +175,19 @@ export class GameDO {
 
                 // 'complete' game if all votes are in and at least 2 players
                 // and there are no more players present
-                const { you, votes } = await this.retrieveGameState(id);
-
-                const totalPlayers = calculatePlayersPresent({
-                  you: {
-                    id: user.id,
-                    ...you
-                  },
+                const {
+                  you,
                   votes,
-                  allPlayersPresent: this.sockets.allMetadata() as PlayerPrivateMetadata[]
-                });
+                  playersPresent
+                } = await this.retrieveGameState(id);
 
-                const invalidVotes = votes.filter(vote => {
-                  return vote[1] === null;
-                });
+                const totalPlayers = 1 + votes.length + playersPresent.length;
+                const totalVotes = 1 + votes.length;
 
-                if (votes.length > 1 && invalidVotes.length === 0) {
+                if (totalPlayers === totalVotes) {
                   await this.state.storage.put('gameState', 'complete');
                 }
+
                 this.sockets.broadcastExceptSender(mySocket, {
                   eventId: 'game-state-change'
                 });
@@ -277,7 +239,7 @@ export class GameDO {
 
       case '/':
         const { id } = JSON.parse(url.searchParams.get('user'));
-        const { you, votes } = await this.retrieveGameState(id);
+        const { you, votes, playersPresent } = await this.retrieveGameState(id);
 
         return new Response(
           JSON.stringify({
@@ -285,14 +247,7 @@ export class GameDO {
             story: await this.state.storage.get('story'),
             votes,
             you,
-            playersPresent: calculatePlayersPresent({
-              you: {
-                id,
-                ...you
-              },
-              votes,
-              allPlayersPresent: this.sockets.allMetadata() as PlayerPrivateMetadata[]
-            })
+            playersPresent
           }),
           {
             headers: {

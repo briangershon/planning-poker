@@ -126,6 +126,7 @@ function PlayGame() {
   function restartGame() {
     ws.current.restartGame();
     dispatch(clearAllVotes());
+    refresh();
   }
 
   const relativeGameInviteUrl = `/games/${gameId}`;
@@ -154,11 +155,11 @@ function PlayGame() {
               <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
               <h2>Invite</h2>
+              <Invitees you={game.you} players={game.playersPresent} />
               <GameInvite
                 relativeGameInviteUrl={relativeGameInviteUrl}
                 gameInviteUrl={gameInviteUrl}
               />
-              <Invitees you={game.you} players={game.playersPresent} />
 
               <h2>Play Game</h2>
               <div>
@@ -182,6 +183,7 @@ function PlayGame() {
               <Players
                 you={game.you}
                 players={game.players}
+                playersPresent={game.playersPresent}
                 showCards={false}
               />
 
@@ -202,7 +204,12 @@ function PlayGame() {
 
               <h2>Final Results</h2>
 
-              <Players you={game.you} players={game.players} showCards={true} />
+              <Players
+                you={game.you}
+                players={game.players}
+                playersPresent={game.playersPresent}
+                showCards={true}
+              />
 
               <div>
                 <button onClick={restartGame}>Restart Game</button>

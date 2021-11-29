@@ -35,6 +35,7 @@ export interface GameStateParams {
   voteList: CloudflareStorageList;
   loggedInPlayerId: string;
   youInfo: User;
+  allPlayersPresent: PlayerPrivateMetadata[];
   onRetrievePlayer: (playerId: string) => Promise<PlayerPublicMetadata>;
 }
 
@@ -44,17 +45,20 @@ export class GameState {
   voteList: CloudflareStorageList;
   loggedInPlayerId: string;
   youInfo: User;
+  allPlayersPresent: PlayerPrivateMetadata[];
   onRetrievePlayer: (playerId: string) => Promise<PlayerPublicMetadata>;
 
   constructor({
     voteList,
     loggedInPlayerId,
     youInfo,
+    allPlayersPresent,
     onRetrievePlayer
   }: GameStateParams) {
     this.voteList = voteList;
     this.loggedInPlayerId = loggedInPlayerId;
     this.youInfo = youInfo;
+    this.allPlayersPresent = allPlayersPresent;
     this.onRetrievePlayer = onRetrievePlayer;
   }
 
@@ -104,7 +108,40 @@ export class GameState {
     };
   }
 
+  async playersPresent(): Promise<PlayerPublicMetadata[]> {
+    let playersPresent = [];
+
+    const otherVotes = await this.otherVotes();
+    const allVoteIds = otherVotes.map(v => {
+      return v.id;
+    });
+
+    const allPlayersPresent = this.allPlayersPresent;
+    for (let i = 0; i < allPlayersPresent.length; i++) {
+      let p = allPlayersPresent[i];
+
+      // skip YOU
+      if (p.id === this.loggedInPlayerId) continue;
+
+      // FILTER OUT THOSE WHO HAVE VOTED
+      if (allVoteIds.includes(p.id)) continue;
+
+      // return public properties, so exclude 'id'
+      playersPresent.push({
+        name: p.name,
+        avatarUrl: p.avatarUrl,
+        vote: null
+      });
+    }
+
+    return playersPresent;
+  }
+
   async fullState() {
-    return { you: this.you(), votes: await this.otherVotes() };
+    return {
+      you: this.you(),
+      votes: await this.otherVotes(),
+      playersPresent: await this.playersPresent()
+    };
   }
 }

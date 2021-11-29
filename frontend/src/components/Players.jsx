@@ -2,9 +2,11 @@ import React from 'react';
 import styles from './Players.module.css';
 import CardVisible from './CardVisible';
 import CardHidden from './CardHidden';
-import CardPlaceholder from './CardPlaceholder';
+import { InviteesAwaitingVote } from './InviteesAwaitingVote';
 
-function Players({ you, players, showCards }) {
+function Players({ you, players, playersPresent, showCards }) {
+  console.log('you', you);
+  console.log('playersPresent', playersPresent);
   return (
     <>
       <ul className={styles.ul}>
@@ -15,11 +17,6 @@ function Players({ you, players, showCards }) {
             <CardHidden name={you.name} />
           )}
         </li>
-        {players.length === 0 && (
-          <li key="placeholder" className={styles.li}>
-            <CardPlaceholder name={'add player'} />
-          </li>
-        )}
         {players.map((p) => {
           return (
             <li key={p.name} className={styles.li}>
@@ -31,6 +28,7 @@ function Players({ you, players, showCards }) {
             </li>
           );
         })}
+        <InviteesAwaitingVote players={playersPresent} />
       </ul>
       {/* <button className={styles.button}>Invite players</button> */}
     </>
