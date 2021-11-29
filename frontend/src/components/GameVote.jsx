@@ -27,7 +27,7 @@ export function GameVote({ sendVote }) {
           <button onClick={() => sendVote('?')}>?</button>
         </li>
         <li>
-          <button onClick={() => sendVote(null)}>Clear</button>
+          <button onClick={() => sendVote(null)}>Remove vote</button>
         </li>
       </ul>
     </div>

@@ -28,7 +28,6 @@ export class WebsocketClient {
       });
 
       this.websocket.addEventListener('message', (event) => {
-        console.log('Websocket: Message received from server:', event.data);
         this.onMessage(JSON.parse(event.data));
       });
 
@@ -57,7 +56,6 @@ export class WebsocketClient {
       eventData,
     };
     this.websocket.send(JSON.stringify(message));
-    console.log('sent message to server', message);
   }
 
   sendVote(vote) {

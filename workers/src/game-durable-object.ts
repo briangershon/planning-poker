@@ -171,7 +171,11 @@ export class GameDO {
                 }
 
                 const { id } = user;
-                await this.state.storage.put(`VOTE|${id}`, newVote);
+                if (newVote === null) {
+                  await this.state.storage.delete(`VOTE|${id}`);
+                } else {
+                  await this.state.storage.put(`VOTE|${id}`, newVote);
+                }
 
                 // 'complete' game if all votes are in and at least 2 players
                 // and there are no more players present

@@ -5,8 +5,6 @@ import CardHidden from './CardHidden';
 import { InviteesAwaitingVote } from './InviteesAwaitingVote';
 
 function Players({ you, players, playersPresent, showCards }) {
-  console.log('you', you);
-  console.log('playersPresent', playersPresent);
   return (
     <>
       <ul className={styles.ul}>
@@ -14,7 +12,7 @@ function Players({ you, players, playersPresent, showCards }) {
           {you.vote ? (
             <CardVisible name={you.name} value={you.vote} />
           ) : (
-            <CardHidden name={you.name} />
+            <CardHidden name={you.name} vote={you.vote} />
           )}
         </li>
         {players.map((p) => {
@@ -23,7 +21,7 @@ function Players({ you, players, playersPresent, showCards }) {
               {showCards ? (
                 <CardVisible name={p.name} value={p.vote} cardState="visible" />
               ) : (
-                <CardHidden name={p.name} />
+                <CardHidden name={p.name} vote={p.vote} />
               )}
             </li>
           );
