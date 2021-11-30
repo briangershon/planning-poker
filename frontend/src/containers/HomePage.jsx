@@ -31,17 +31,27 @@ function HomePage() {
       {!isLoggedIn && (
         <div>
           <h1>Welcome to Planning Poker!</h1>
+          <h2>What</h2>
           <p>
-            Please <a href="/api/login/github">login</a> to play. Visit{' '}
-            <Link to="/about">about</Link> for more info.
+            Estimate the t-shirt size of software stories with your team in
+            real-time.
+          </p>
+          <h2>How</h2>
+          <p>
+            Please <a href="/api/login/github">login</a> to create a game to
+            play.
           </p>
           <p>
-            You can also try a{' '}
+            A{' '}
             <a href="https://planningpoker.games/games/715ffdd8-6a65-42f6-92ff-89f37933acc5">
               Demo Game
             </a>{' '}
-            if you don't have a second Github account to test playing a game with
-            multiple players.
+            is also available if you don't have a second Github account to test
+            playing a game with multiple players.
+          </p>
+          <p>
+            For information about this site and a link to source code, please
+            visit <Link to="/about">About</Link>.
           </p>
         </div>
       )}
