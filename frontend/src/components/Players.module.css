@@ -1,6 +1,18 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.invite {
+  border: 1px dotted #111;
+  border-radius: 4px;
+  padding: 10px;
+  margin-left: 20px;
+  /* margin: 5px; */
+}
+
 .ul {
   color: blue;
-  padding: 0;
   list-style-type: none;
 }
 

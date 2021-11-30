@@ -23,9 +23,7 @@ import {
 import { WebsocketClient } from '../lib/websocket_client';
 
 import { GameStory } from '../components/GameStory';
-import { GameInvite } from '../components/GameInvite';
 import { GameVote } from '../components/GameVote';
-import { Invitees } from '../components/Invitees';
 
 function PlayGame() {
   const game = useSelector((state) => state.poker);
@@ -155,14 +153,23 @@ function PlayGame() {
               <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
               <h2>Invite</h2>
-              <Invitees you={game.you} players={game.playersPresent} />
-              <GameInvite
-                relativeGameInviteUrl={relativeGameInviteUrl}
-                gameInviteUrl={gameInviteUrl}
+              <Players
+                you={game.you}
+                players={game.players}
+                playersPresent={game.playersPresent}
+                showCards={false}
+                gameId={gameId}
               />
 
-              <h2>Play Game</h2>
+              {/* <h2>Play Game</h2> */}
               <div>
+                {game.playersPresent.length === 0 && (
+                  <p>
+                    <strong>
+                      You need at least one other player to start the game.
+                    </strong>
+                  </p>
+                )}
                 <button
                   onClick={beginGame}
                   disabled={game.playersPresent.length === 0}
@@ -185,6 +192,8 @@ function PlayGame() {
                 players={game.players}
                 playersPresent={game.playersPresent}
                 showCards={false}
+                gameId={gameId}
+                showInvite={false}
               />
 
               <div>
@@ -209,6 +218,8 @@ function PlayGame() {
                 players={game.players}
                 playersPresent={game.playersPresent}
                 showCards={true}
+                gameId={gameId}
+                showInvite={false}
               />
 
               <div>

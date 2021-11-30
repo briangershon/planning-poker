@@ -1,4 +1,5 @@
 .cardWrapper {
+  width: 100px;
 }
 
 .card {
@@ -7,10 +8,17 @@
   width: 60px;
   height: 80px;
   font-size: 2rem;
+  margin: 0 auto;
+  margin-bottom: 20px;
 }
 
 .cardName {
   font-size: 1.5rem;
+}
+
+.cardWrapper img {
+  border-radius: 4em;
+  border: 3px solid #e4572e;
 }
 
 .placeholder {
