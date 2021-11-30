@@ -187,32 +187,6 @@ router.post('/api/games', withUser, requireUser, async (request, env) => {
   });
 });
 
-// Delete game
-router.delete(
-  '/api/games/:gameId',
-  withUser,
-  requireUser,
-  async (request, env) => {
-    const { params } = request;
-    const userId = request.user.id;
-    const gameId = params.gameId;
-
-    // Ask Durable Object to remove all its data to delete itself
-    let id = env.GAME_DO.idFromName(gameId);
-    let obj = env.GAME_DO.get(id);
-    await obj.fetch(new Request('http://durable/deallocate'));
-
-    // delete game in KV
-    await env.GAME.delete(`${userId}:${gameId}`);
-
-    return new Response(JSON.stringify({ gameId }), {
-      headers: {
-        'content-type': 'application/json;charset=UTF-8'
-      }
-    });
-  }
-);
-
 // Get game status (GET /api/games/:gameId)
 router.get(
   '/api/games/:gameId',

@@ -16,7 +16,9 @@ export class WebsocketClient {
   }
 
   init() {
-    this.websocket = new WebSocket(`${this.url}?gameId=${encodeURI(this.gameId)}`);
+    this.websocket = new WebSocket(
+      `${this.url}?gameId=${encodeURI(this.gameId)}`
+    );
     try {
       if (!this.websocket) {
         throw new Error("Websocket: Server didn't accept websocket");
@@ -26,7 +28,6 @@ export class WebsocketClient {
       });
 
       this.websocket.addEventListener('message', (event) => {
-        console.log('Websocket: Message received from server:', event.data);
         this.onMessage(JSON.parse(event.data));
       });
 
@@ -38,7 +39,11 @@ export class WebsocketClient {
     }
   }
 
-  sendVote(vote) {
+  close() {
+    this.websocket.close();
+  }
+
+  sendEvent(eventId: string, eventData?: string | Object) {
     if (!this.initialized) {
       console.log('Websocket not initialized: Can not send vote.');
       return;
@@ -47,25 +52,29 @@ export class WebsocketClient {
     const message = {
       sessionId: this.sessionId,
       gameId: this.gameId,
-      eventId: 'vote',
-      eventData: vote,
+      eventId,
+      eventData,
     };
     this.websocket.send(JSON.stringify(message));
-    console.log('sent message to server', message);
+  }
+
+  sendVote(vote) {
+    this.sendEvent('vote', vote);
   }
 
   sendStory(newStory) {
-    if (!this.initialized) {
-      console.log('Websocket not initialized: Can not send story.');
-      return;
-    }
-    const message = {
-      sessionId: this.sessionId,
-      gameId: this.gameId,
-      eventId: 'update-story',
-      eventData: newStory,
-    };
-    this.websocket.send(JSON.stringify(message));
-    console.log('sent message to server', message);
+    this.sendEvent('update-story', newStory);
+  }
+
+  restartGame() {
+    this.sendEvent('restart-game');
+  }
+
+  updateGameState(newState) {
+    this.sendEvent('update-game-state', newState);
+  }
+
+  deleteGame() {
+    this.sendEvent('delete-game');
   }
 }
