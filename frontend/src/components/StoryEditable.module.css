@@ -1,0 +1,11 @@
+.editable {
+  background-color: white;
+  border: 1px dotted #111;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.disabled {
+  background-color: lightgray;
+  color: gray;
+}

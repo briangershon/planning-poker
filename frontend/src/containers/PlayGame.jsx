@@ -161,7 +161,6 @@ function PlayGame() {
                 gameId={gameId}
               />
 
-              {/* <h2>Play Game</h2> */}
               <div>
                 {game.playersPresent.length === 0 && (
                   <p>
