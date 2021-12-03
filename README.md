@@ -33,6 +33,7 @@ API hosted at <https://planningpoker.games/api>
 - Create PR.
 - Update changelog in the feature branch. Remember to add link at the bottom too. Commit and push.
 - Merge PR.
+- Bring down `main` branch.
 - Tag it. For example `git tag -a v2.0.0 -m "Add full websocket support"`
 - Push tag. For example `git push origin v2.0.0`
 
