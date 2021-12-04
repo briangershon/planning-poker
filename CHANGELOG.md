@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [2.2.1] - 2021-12-03
+
+Story editing changes (`<GameStory/>`)
+
+### Fixed
+
+- Fixed JavaScript error when user tries to change story when game has ended
+
+### Changed
+
+- Disable editing story when game has ended
+- Switch from contenteditable `<div>` to vanilla `<textarea>` for easy testing
+
+### Added
+
+- Create suite of component tests for `<GameStory/>`
+
 ## [2.2.0] - 2021-12-01
 
 ### Changed
@@ -79,7 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hosted on Cloudflare Pages
 - Changelog
 
-[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.2.0...HEAD
+[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.2.1...HEAD
+[2.2.1]: https://github.com/briangershon/planning-poker/releases/tag/v2.2.1
 [2.2.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.2.0
 [2.1.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.1.0
 [2.0.2]: https://github.com/briangershon/planning-poker/releases/tag/v2.0.2

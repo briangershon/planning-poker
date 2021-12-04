@@ -8,12 +8,14 @@ export function GameStory({ story, sendStoryUpdate }) {
   const [isDirty, setDirty] = useState(false);
 
   function onBlur(evt) {
-    const text = sanitizeHtml(evt.target.innerHTML, {
+    const text = sanitizeHtml(evt.target.value, {
       allowedTags: [],
       allowedAttributes: {},
     });
     setUpdatingStory(true);
-    sendStoryUpdate(text);
+    if (typeof sendStoryUpdate !== 'undefined') {
+      sendStoryUpdate(text);
+    }
     setDirty(false);
     setUpdatingStory(false);
   }
@@ -38,24 +40,25 @@ export function GameStory({ story, sendStoryUpdate }) {
             <strong>Please add a story.</strong>
           </div>
         )}
-
         <StoryEditable
           onBlur={onBlur}
           onInput={onInput}
-          disabled={isUpdatingStory}
-        >
-          {sanitizedStory()}
-        </StoryEditable>
-
+          disabled={isUpdatingStory || typeof sendStoryUpdate === 'undefined'}
+          value={sanitizedStory()}
+        />
         <div className={styles.instructions}>
-          {isDirty ? (
+          {isDirty && (
             <span className={styles.dirty}>
               <strong>Unsaved changes!</strong> Click outside of content area to
               save.
             </span>
-          ) : (
-            <span>Click to edit.</span>
           )}
+
+          {!isDirty &&
+            !isUpdatingStory &&
+            typeof sendStoryUpdate !== 'undefined' && (
+              <span>Click above to edit story.</span>
+            )}
         </div>
       </div>
     </div>

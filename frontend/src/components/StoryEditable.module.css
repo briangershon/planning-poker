@@ -3,9 +3,10 @@
   border: 1px dotted #111;
   border-radius: 4px;
   padding: 4px;
+  width: 100%;
 }
 
 .disabled {
-  background-color: lightgray;
+  background-color: #eee;
   color: gray;
 }
