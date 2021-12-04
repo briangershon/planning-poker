@@ -57,7 +57,7 @@ export function GameStory({ story, sendStoryUpdate }) {
           {!isDirty &&
             !isUpdatingStory &&
             typeof sendStoryUpdate !== 'undefined' && (
-              <span>Click to edit.</span>
+              <span>Click above to edit story.</span>
             )}
         </div>
       </div>
