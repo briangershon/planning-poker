@@ -98,6 +98,10 @@
     flex-direction: column;
   }
 
+  .contentWrapper {
+    overflow: visible; /* scroll whole page when on mobile */
+  }
+
   .nav {
     padding: 0;
   }
