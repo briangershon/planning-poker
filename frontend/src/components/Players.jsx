@@ -2,32 +2,11 @@ import React from 'react';
 import styles from './Players.module.css';
 import CardVisible from './CardVisible';
 import CardHidden from './CardHidden';
-import { GameInvite } from '../components/GameInvite';
-const { SITE_URL } = import.meta.env;
 
-function Players({
-  you,
-  players,
-  playersPresent,
-  showCards,
-  gameId,
-  showInvite = true,
-}) {
-  const relativeGameInviteUrl = `/games/${gameId}`;
-  const gameInviteUrl = `${SITE_URL}/games/${gameId}`;
-
+function Players({ you, players, playersPresent, showCards }) {
   return (
     <>
-      <div className={styles.container}>
-        {showInvite && (
-          <div className={styles.invite}>
-            <GameInvite
-              relativeGameInviteUrl={relativeGameInviteUrl}
-              gameInviteUrl={gameInviteUrl}
-            />
-          </div>
-        )}
-
+      <div>
         <div>
           <ul className={styles.ul}>
             <li key={you.name} className={styles.li}>

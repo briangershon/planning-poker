@@ -4,7 +4,10 @@ const { SITE_URL, WEBSOCKET_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
 import Cookies from 'js-cookie';
 
+import { GameInvite } from '../components/GameInvite';
+
 import Players from '../components/Players';
+import styles from './PlayGame.module.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -144,21 +147,13 @@ function PlayGame() {
         <div>
           {game.gameState === 'lobby' && (
             <>
-              <div>
-                Please add the story you want to estimate, invite players, then{' '}
-                <em>Start Game</em>.
-              </div>
-
-              <h2>Story</h2>
               <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
-              <h2>Invite</h2>
               <Players
                 you={game.you}
                 players={game.players}
                 playersPresent={game.playersPresent}
                 showCards={false}
-                gameId={gameId}
               />
 
               <div>
@@ -169,19 +164,25 @@ function PlayGame() {
                     </strong>
                   </p>
                 )}
-                <button
-                  onClick={beginGame}
-                  disabled={game.playersPresent.length === 0}
-                >
-                  Start Game
-                </button>
+
+                <div className={styles.center}>
+                  <GameInvite
+                    relativeGameInviteUrl={relativeGameInviteUrl}
+                    gameInviteUrl={gameInviteUrl}
+                  />{' '}
+                  <button
+                    onClick={beginGame}
+                    disabled={game.playersPresent.length === 0}
+                  >
+                    Start Game
+                  </button>
+                </div>
               </div>
             </>
           )}
 
           {game.gameState === 'in-progress' && (
             <>
-              <h2>Story</h2>
               <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
               <h2>Cast your vote</h2>
@@ -191,8 +192,6 @@ function PlayGame() {
                 players={game.players}
                 playersPresent={game.playersPresent}
                 showCards={false}
-                gameId={gameId}
-                showInvite={false}
               />
 
               <div>
@@ -200,29 +199,29 @@ function PlayGame() {
                   Votes will be revealed once everyone has voted. You can also
                   manually end the game here.
                 </p>
-                <button onClick={completeGame}>End Game</button>
+                <button className={styles.center} onClick={completeGame}>
+                  End Game
+                </button>
               </div>
             </>
           )}
 
           {game.gameState === 'complete' && (
             <>
-              <h2>Story</h2>
               <GameStory story={game.story} />
 
               <h2>Final Results</h2>
-
               <Players
                 you={game.you}
                 players={game.players}
                 playersPresent={game.playersPresent}
                 showCards={true}
-                gameId={gameId}
-                showInvite={false}
               />
 
               <div>
-                <button onClick={restartGame}>Restart Game</button>
+                <button className={styles.center} onClick={restartGame}>
+                  Restart Game
+                </button>
               </div>
             </>
           )}

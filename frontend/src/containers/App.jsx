@@ -89,18 +89,20 @@ function App() {
           </nav>
         </div>
 
-        <div className={styles.content}>
-          <Switch>
-            <Route exact path="/">
-              <HomePage />
-            </Route>
-            <Route path="/about">
-              <AboutPage />
-            </Route>
-            <Route path="/games/:gameId">
-              <PlayGame />
-            </Route>
-          </Switch>
+        <div className={styles.contentWrapper}>
+          <div className={styles.content}>
+            <Switch>
+              <Route exact path="/">
+                <HomePage />
+              </Route>
+              <Route path="/about">
+                <AboutPage />
+              </Route>
+              <Route path="/games/:gameId">
+                <PlayGame />
+              </Route>
+            </Switch>
+          </div>
         </div>
       </div>
     </Router>

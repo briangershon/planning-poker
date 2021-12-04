@@ -4,20 +4,29 @@
   display: flex;
   justify-content: space-between;
   height: 100%;
-  background-color: #e4572e;
+  background-color: #ff6637;
 }
 
-.content {
+.contentWrapper {
   flex: 2;
   background-color: #daf1fb;
-  padding: 2rem 3rem;
   overflow: auto;
 }
 
-.content a, .content a:visited {
+.content {
+  max-width: 600px;
+  margin: 2rem 3rem;
+}
+
+.content a,
+.content a:visited {
   font-weight: bold;
-  color: #e4572e;
+  color: #ff6637;
   text-decoration: none;
+}
+
+.content a:hover {
+  color: #ffcb3a;
 }
 
 .login {
@@ -41,10 +50,10 @@
   color: #111;
 }
 
+.login a:hover,
 .login a.active,
 .login a.active:visited {
-  color: #ffd970;
-  /* font-weight: bold; */
+  color: #ffcb3a;
 }
 
 .nav {
@@ -72,6 +81,7 @@
   color: #111;
 }
 
+.nav a:hover,
 .nav a.active,
 .nav a.active:visited {
   color: #ffd970;

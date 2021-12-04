@@ -26,5 +26,25 @@ body {
 
 p {
   margin: 2rem 0;
-  max-width: 600px;
+}
+
+button {
+  background-color: #ff6637;
+  border: 1px solid #999;
+  padding: 10px 14px;
+  border-radius: 5px;
+  color: rgb(0, 0, 0);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+button:hover {
+  background-color: #ffcb3a;
+}
+
+button:disabled,
+button[disabled] {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
 }
