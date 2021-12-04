@@ -124,7 +124,7 @@ function PlayGame() {
     dispatch(endGame());
   }
 
-  function restartGame() {
+  function retryGame() {
     ws.current.restartGame();
     dispatch(clearAllVotes());
     refresh();
@@ -194,14 +194,16 @@ function PlayGame() {
                 showCards={false}
               />
 
-              <div>
+              <div className={styles.center}>
                 <p>
                   Votes will be revealed once everyone has voted. You can also
                   manually end the game here.
                 </p>
-                <button className={styles.center} onClick={completeGame}>
-                  End Game
-                </button>
+                <GameInvite
+                  relativeGameInviteUrl={relativeGameInviteUrl}
+                  gameInviteUrl={gameInviteUrl}
+                />{' '}
+                <button onClick={completeGame}>End Game</button>
               </div>
             </>
           )}
@@ -219,8 +221,8 @@ function PlayGame() {
               />
 
               <div>
-                <button className={styles.center} onClick={restartGame}>
-                  Restart Game
+                <button className={styles.center} onClick={retryGame}>
+                  Retry Game
                 </button>
               </div>
             </>

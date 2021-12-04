@@ -29,9 +29,8 @@ p {
 }
 
 button {
-  background-color: #ff6637;
-  border: 1px solid #999;
-  padding: 10px 14px;
+  background-color: #eee; /*  #ff6637; */
+  padding: 4px 6px;
   border-radius: 5px;
   color: rgb(0, 0, 0);
   font-size: 1.5rem;
@@ -44,7 +43,7 @@ button:hover {
 
 button:disabled,
 button[disabled] {
-  border: 1px solid #999999;
-  background-color: #cccccc;
-  color: #666666;
+  border: 1px solid #999;
+  background-color: #ccc;
+  color: #666;
 }
