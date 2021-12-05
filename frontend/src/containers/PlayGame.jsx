@@ -186,7 +186,7 @@ function PlayGame() {
               <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
               <h2>Cast your vote</h2>
-              <GameVote sendVote={sendVote} />
+              <GameVote sendVote={sendVote} currentVote={game.you.vote} />
               <Players
                 you={game.you}
                 players={game.players}

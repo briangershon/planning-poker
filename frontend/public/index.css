@@ -24,6 +24,11 @@ body {
   padding: 0;
 }
 
+h2 {
+  padding: 0;
+  margin: 0;
+}
+
 p {
   margin: 2rem 0;
 }
