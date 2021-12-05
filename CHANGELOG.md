@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [2.3.1] - 2021-12-04
+
+### Fixed
+
+- Fix bug that showed "You need at least one other player to start the game" warning in case where there were two players and one had voted.
+
 ## [2.3.0] - 2021-12-04
 
 ### Changed
@@ -110,7 +116,8 @@ Story editing changes (`<GameStory/>`)
 - Hosted on Cloudflare Pages
 - Changelog
 
-[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.3.0...HEAD
+[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.3.1...HEAD
+[2.3.1]: https://github.com/briangershon/planning-poker/releases/tag/v2.3.1
 [2.3.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.3.0
 [2.2.1]: https://github.com/briangershon/planning-poker/releases/tag/v2.2.1
 [2.2.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.2.0

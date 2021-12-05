@@ -167,7 +167,7 @@ function PlayGame() {
               </div>
 
               <div className={styles.center}>
-                {game.playersPresent.length === 0 && (
+                {game.players.length + game.playersPresent.length === 0 && (
                   <p>
                     <strong>
                       You need at least one other player to start the game.
