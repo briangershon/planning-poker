@@ -1,7 +1,12 @@
 import React from 'react';
-import styles from './Card.module.css';
+import styles from './TShirt.module.css';
 
-function CardVisible({ name = '(?)', hidden = false, vote = null, avatarUrl }) {
+export function TShirt({
+  name = '(?)',
+  hidden = false,
+  vote = null,
+  avatarUrl,
+}) {
   return (
     <div className={styles.cardWrapper}>
       <div className={styles.avatarWrapper}>
@@ -18,14 +23,10 @@ function CardVisible({ name = '(?)', hidden = false, vote = null, avatarUrl }) {
         <div className={`${styles.tshirt}`}>&nbsp;</div>
       )}
       {hidden && vote !== null && (
-        <div className={`${styles.tshirt} ${styles.active}`}>
-          &nbsp;
-        </div>
+        <div className={`${styles.tshirt} ${styles.active}`}>&nbsp;</div>
       )}
 
       <div className={styles.cardName}>{name}</div>
     </div>
   );
 }
-
-export default CardVisible;

@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Players.module.css';
-import CardVisible from './CardVisible';
+import { TShirt } from './TShirt';
 
 function Players({ you, players, playersPresent, showCards }) {
   return (
@@ -9,13 +9,13 @@ function Players({ you, players, playersPresent, showCards }) {
         <ul className={styles.ul}>
           <li key={you.name} className={styles.li}>
             {you.vote ? (
-              <CardVisible
+              <TShirt
                 name={you.name}
                 vote={you.vote}
                 avatarUrl={you.avatarUrl}
               />
             ) : (
-              <CardVisible
+              <TShirt
                 name={you.name}
                 vote={you.vote}
                 avatarUrl={you.avatarUrl}
@@ -27,13 +27,9 @@ function Players({ you, players, playersPresent, showCards }) {
             return (
               <li key={p.name} className={styles.li}>
                 {showCards ? (
-                  <CardVisible
-                    name={p.name}
-                    vote={p.vote}
-                    avatarUrl={p.avatarUrl}
-                  />
+                  <TShirt name={p.name} vote={p.vote} avatarUrl={p.avatarUrl} />
                 ) : (
-                  <CardVisible
+                  <TShirt
                     name={p.name}
                     vote={p.vote}
                     avatarUrl={p.avatarUrl}
@@ -46,7 +42,7 @@ function Players({ you, players, playersPresent, showCards }) {
           {playersPresent.map((p) => {
             return (
               <li key={p.name} className={styles.li}>
-                <CardVisible
+                <TShirt
                   name={p.name}
                   vote={p.vote}
                   avatarUrl={p.avatarUrl}
