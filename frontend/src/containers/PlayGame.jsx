@@ -149,14 +149,24 @@ function PlayGame() {
             <>
               <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
-              <Players
-                you={game.you}
-                players={game.players}
-                playersPresent={game.playersPresent}
-                showCards={false}
-              />
+              <h2>Cast your vote</h2>
+              <GameVote sendVote={sendVote} currentVote={game.you.vote} />
+              <div className={styles.players}>
+                <div className={styles.topRight}>
+                  <GameInvite
+                    relativeGameInviteUrl={relativeGameInviteUrl}
+                    gameInviteUrl={gameInviteUrl}
+                  />
+                </div>
+                <Players
+                  you={game.you}
+                  players={game.players}
+                  playersPresent={game.playersPresent}
+                  showCards={false}
+                />
+              </div>
 
-              <div>
+              <div className={styles.center}>
                 {game.playersPresent.length === 0 && (
                   <p>
                     <strong>
@@ -166,10 +176,6 @@ function PlayGame() {
                 )}
 
                 <div className={styles.center}>
-                  <GameInvite
-                    relativeGameInviteUrl={relativeGameInviteUrl}
-                    gameInviteUrl={gameInviteUrl}
-                  />{' '}
                   <button
                     onClick={beginGame}
                     disabled={game.playersPresent.length === 0}
@@ -187,22 +193,26 @@ function PlayGame() {
 
               <h2>Cast your vote</h2>
               <GameVote sendVote={sendVote} currentVote={game.you.vote} />
-              <Players
-                you={game.you}
-                players={game.players}
-                playersPresent={game.playersPresent}
-                showCards={false}
-              />
+              <div className={styles.players}>
+                <div className={styles.topRight}>
+                  <GameInvite
+                    relativeGameInviteUrl={relativeGameInviteUrl}
+                    gameInviteUrl={gameInviteUrl}
+                  />
+                </div>
+                <Players
+                  you={game.you}
+                  players={game.players}
+                  playersPresent={game.playersPresent}
+                  showCards={false}
+                />
+              </div>
 
               <div className={styles.center}>
                 <p>
                   Votes will be revealed once everyone has voted. You can also
                   manually end the game here.
-                </p>
-                <GameInvite
-                  relativeGameInviteUrl={relativeGameInviteUrl}
-                  gameInviteUrl={gameInviteUrl}
-                />{' '}
+                </p>{' '}
                 <button onClick={completeGame}>End Game</button>
               </div>
             </>
