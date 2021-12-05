@@ -26,8 +26,6 @@ See [Changelog](./CHANGELOG.md).
 
 Live website hosted at <https://planningpoker.games/>
 
-API hosted at <https://planningpoker.games/api>
-
 ## Github publishing instructions
 
 - Create PR.
@@ -125,3 +123,7 @@ Workflow:
 ### When running locally, I see a "TypeError"
 
 When running locally, if you see `TypeError` and `The first argument must be of type string or an instance of Buffer. Received an instance of Uint8Array` you're using an old version of Node.js. Run `nvm use` to get the latest version.
+
+### Who created the t-shirt graphic?
+
+T-shirt SVG from <https://svgsilh.com/image/34481.html>

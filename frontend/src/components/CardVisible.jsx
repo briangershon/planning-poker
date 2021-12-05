@@ -1,13 +1,28 @@
 import React from 'react';
 import styles from './Card.module.css';
 
-function CardVisible({ name = '(?)', value = '?', avatarUrl }) {
+function CardVisible({ name = '(?)', hidden = false, vote = null, avatarUrl }) {
   return (
     <div className={styles.cardWrapper}>
-      <div className={styles.card}>{value}</div>
-      <div>
-        <img src={avatarUrl} width="50" />
+      <div className={styles.avatarWrapper}>
+        <img src={avatarUrl} />
       </div>
+
+      {!hidden && (
+        <div className={`${styles.tshirt} ${styles.active}`}>
+          <div>{vote}</div>
+        </div>
+      )}
+
+      {hidden && vote === null && (
+        <div className={`${styles.tshirt}`}>&nbsp;</div>
+      )}
+      {hidden && vote !== null && (
+        <div className={`${styles.tshirt} ${styles.active}`}>
+          &nbsp;
+        </div>
+      )}
+
       <div className={styles.cardName}>{name}</div>
     </div>
   );

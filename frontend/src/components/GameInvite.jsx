@@ -8,7 +8,7 @@ export function GameInvite({ relativeGameInviteUrl, gameInviteUrl }) {
 
   return (
     <>
-      <button onClick={onClick}>Invite Players</button>
+      <button onClick={onClick}>Copy Invite URL</button>
     </>
   );
 }

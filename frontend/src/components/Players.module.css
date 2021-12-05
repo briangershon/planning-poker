@@ -2,10 +2,12 @@
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  margin: 0 auto;
   color: blue;
   list-style-type: none;
   padding: 0;
+  margin: 0 auto 10;
+  border: 1px dotted #111;
+  border-radius: 20px;
 }
 
 .li {
