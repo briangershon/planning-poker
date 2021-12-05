@@ -3,8 +3,7 @@
 }
 
 .avatarWrapper {
-  background-color: 'orange';
-  height: 35px;
+  height: 60px; /* Adjust position of avatar. Higher means father from t-shirt */
 }
 
 .avatarWrapper img {
@@ -12,7 +11,8 @@
   border: 2px solid #e4572e;
   width: 50px;
   position: relative;
-  z-index: 1;
+  z-index: 1; /* to ensure avatar is in front of t-shirt */
+  margin-left: 2px; /* move avatar a bit to align with t-shirt image */
 }
 
 .tshirt {
