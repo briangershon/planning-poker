@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [2.3.0] - 2021-12-04
+
+### Changed
+
+- Spruce up UI
+- Move from Cards UI to T-Shirt UI
+- Move invite button to top-right of player area. Copy to Clipboard feature.
+- Restyle buttons
+- Lightened orange color for better contrast
+
+### Fixed
+
+- Fix "content area scrolling separately from page" bug on mobile.
+
 ## [2.2.1] - 2021-12-03
 
 Story editing changes (`<GameStory/>`)
@@ -96,7 +110,8 @@ Story editing changes (`<GameStory/>`)
 - Hosted on Cloudflare Pages
 - Changelog
 
-[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.2.1...HEAD
+[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.3.0
 [2.2.1]: https://github.com/briangershon/planning-poker/releases/tag/v2.2.1
 [2.2.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.2.0
 [2.1.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.1.0

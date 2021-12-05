@@ -1,19 +1,12 @@
-.container {
-  display: flex;
-  flex-direction: column;
-}
-
-.invite {
-  border: 1px dotted #111;
-  border-radius: 4px;
-  padding: 10px;
-  margin-left: 20px;
-  /* margin: 5px; */
-}
-
 .ul {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
   color: blue;
   list-style-type: none;
+  padding: 0;
+  margin: 0 auto 10;
+  border-radius: 20px;
 }
 
 .li {

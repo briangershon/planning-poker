@@ -4,7 +4,10 @@ const { SITE_URL, WEBSOCKET_URL } = import.meta.env;
 import { deleteGameId } from '../store/userSlice';
 import Cookies from 'js-cookie';
 
+import { GameInvite } from '../components/GameInvite';
+
 import Players from '../components/Players';
+import styles from './PlayGame.module.css';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -121,7 +124,7 @@ function PlayGame() {
     dispatch(endGame());
   }
 
-  function restartGame() {
+  function retryGame() {
     ws.current.restartGame();
     dispatch(clearAllVotes());
     refresh();
@@ -144,24 +147,26 @@ function PlayGame() {
         <div>
           {game.gameState === 'lobby' && (
             <>
-              <div>
-                Please add the story you want to estimate, invite players, then{' '}
-                <em>Start Game</em>.
-              </div>
-
-              <h2>Story</h2>
               <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
-              <h2>Invite</h2>
-              <Players
-                you={game.you}
-                players={game.players}
-                playersPresent={game.playersPresent}
-                showCards={false}
-                gameId={gameId}
-              />
+              <h2>Cast your vote</h2>
+              <GameVote sendVote={sendVote} currentVote={game.you.vote} />
+              <div className={styles.players}>
+                <div className={styles.topRight}>
+                  <GameInvite
+                    relativeGameInviteUrl={relativeGameInviteUrl}
+                    gameInviteUrl={gameInviteUrl}
+                  />
+                </div>
+                <Players
+                  you={game.you}
+                  players={game.players}
+                  playersPresent={game.playersPresent}
+                  showCards={false}
+                />
+              </div>
 
-              <div>
+              <div className={styles.center}>
                 {game.playersPresent.length === 0 && (
                   <p>
                     <strong>
@@ -169,37 +174,45 @@ function PlayGame() {
                     </strong>
                   </p>
                 )}
-                <button
-                  onClick={beginGame}
-                  disabled={game.playersPresent.length === 0}
-                >
-                  Start Game
-                </button>
+
+                <div className={styles.center}>
+                  <button
+                    onClick={beginGame}
+                    disabled={game.playersPresent.length === 0}
+                  >
+                    Start Game
+                  </button>
+                </div>
               </div>
             </>
           )}
 
           {game.gameState === 'in-progress' && (
             <>
-              <h2>Story</h2>
               <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
               <h2>Cast your vote</h2>
-              <GameVote sendVote={sendVote} />
-              <Players
-                you={game.you}
-                players={game.players}
-                playersPresent={game.playersPresent}
-                showCards={false}
-                gameId={gameId}
-                showInvite={false}
-              />
+              <GameVote sendVote={sendVote} currentVote={game.you.vote} />
+              <div className={styles.players}>
+                <div className={styles.topRight}>
+                  <GameInvite
+                    relativeGameInviteUrl={relativeGameInviteUrl}
+                    gameInviteUrl={gameInviteUrl}
+                  />
+                </div>
+                <Players
+                  you={game.you}
+                  players={game.players}
+                  playersPresent={game.playersPresent}
+                  showCards={false}
+                />
+              </div>
 
-              <div>
+              <div className={styles.center}>
                 <p>
                   Votes will be revealed once everyone has voted. You can also
                   manually end the game here.
-                </p>
+                </p>{' '}
                 <button onClick={completeGame}>End Game</button>
               </div>
             </>
@@ -207,22 +220,20 @@ function PlayGame() {
 
           {game.gameState === 'complete' && (
             <>
-              <h2>Story</h2>
               <GameStory story={game.story} />
 
               <h2>Final Results</h2>
-
               <Players
                 you={game.you}
                 players={game.players}
                 playersPresent={game.playersPresent}
                 showCards={true}
-                gameId={gameId}
-                showInvite={false}
               />
 
               <div>
-                <button onClick={restartGame}>Restart Game</button>
+                <button className={styles.center} onClick={retryGame}>
+                  Retry Game
+                </button>
               </div>
             </>
           )}

@@ -1,4 +1,21 @@
-.inviteLink a {
+.container {
+  display: flex;
+  vertical-align: middle;
   font-size: 1.5rem;
-  display: inline-block;
+  margin-right: 4px;
+}
+
+.message {
+  padding: 4px 10px;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+.button {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.button img {
+  vertical-align: middle;
 }

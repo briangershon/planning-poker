@@ -1,6 +1,7 @@
 .vote {
   padding: 0;
   list-style-type: none;
+  margin: 0;
 }
 
 .vote li {
@@ -9,7 +10,7 @@
 }
 
 .vote button {
-  width: 44px;
+  width: 50px;
 }
 
 .vote .removeButton {

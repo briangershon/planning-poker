@@ -1,0 +1,19 @@
+.players {
+  border: 1px dotted #111;
+  border-radius: 20px;
+  position: relative;
+  margin: 4px;
+}
+
+.topRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 5px;
+}
+
+.center {
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+}

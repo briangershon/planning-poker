@@ -26,8 +26,6 @@ See [Changelog](./CHANGELOG.md).
 
 Live website hosted at <https://planningpoker.games/>
 
-API hosted at <https://planningpoker.games/api>
-
 ## Github publishing instructions
 
 - Create PR.
@@ -119,6 +117,11 @@ Workflow:
   - `./src/lib` code modules that don't have a UI
 
 - `/workers` for back-end Cloudflare code.
+
+### SVG Assets
+
+- T-shirt SVG from <https://svgsilh.com/image/34481.html>
+- Link icon from <https://icons.getbootstrap.com>
 
 ## FAQs
 

@@ -1,0 +1,43 @@
+.cardWrapper {
+  color: #e4572e;
+}
+
+.avatarWrapper {
+  height: 60px; /* Adjust position of avatar. Higher means father from t-shirt */
+}
+
+.avatarWrapper img {
+  border-radius: 4em;
+  border: 2px solid #e4572e;
+  width: 50px;
+  position: relative;
+  z-index: 1; /* to ensure avatar is in front of t-shirt */
+  margin-left: 2px; /* move avatar a bit to align with t-shirt image */
+}
+
+.tshirt {
+  width: 110px;
+  height: 130px;
+  background-color: transparent;
+  background-image: url('/tshirt.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  position: relative;
+}
+
+.active {
+  background-image: url('/tshirt-active.svg');
+}
+
+.tshirt div {
+  font-size: 2rem;
+  font-weight: bold;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+}
+
+.cardName {
+  font-size: 1.5rem;
+}
