@@ -5,9 +5,10 @@
   margin-right: 4px;
 }
 
-.label {
+.message {
   padding: 4px 10px;
   vertical-align: middle;
+  font-weight: bold;
 }
 
 .button {
@@ -18,14 +19,3 @@
 .button img {
   vertical-align: middle;
 }
-
-/* .shortLink {
-  overflow-wrap: normal;
-  text-overflow: ellipsis;
-  overflow:hidden;
-  white-space: nowrap;
-  border: 1px dotted #111;
-  padding: 4px;
-  font-size: 1.25rem;
-  margin: 4px;
-} */
