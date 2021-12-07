@@ -12,7 +12,7 @@ The Cloudflare Developer Challenge is an event where developers are challenged t
 
 This project uses Cloudflare Workers, Workers KV, Durable Objects, Websockets and Cloudflare Pages. Also React, Redux Toolkit, TypeScript and Snowpack.
 
-This project was a good fit for Cloudflare `Durable Objects` since each game manages state for multiple players, as well as `Websockets` for real-time player updates.
+Cloudflare `Durable Objects` was ideal for maintaining persistent state for each game and its players, as well as being the central point for consolidating `Websocket` requests coming in from the network edge.
 
 ## Screenshot
 
@@ -96,7 +96,7 @@ Scope:
 
 - A game has an ID, a status, a story sentence, and array of users and their card votes.
 - No concept of game ownership/admin. Anyone can join and do anything in a game if they have the ID.
-- Get it working with polling (then use realtime websocket)
+- Real-time updates via websockets
 
 Workflow:
 

@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [2.4.0] - 2021-12-06
+
+### Fixed
+
+- Bug that was allowing players to vote before game started.
+
+### Removed
+
+- Removed the demo game, which was originally created so that people could try out the site without having to login as a second player. However this broke once games could be reset.
+
 ## [2.3.1] - 2021-12-04
 
 ### Fixed
@@ -116,7 +126,8 @@ Story editing changes (`<GameStory/>`)
 - Hosted on Cloudflare Pages
 - Changelog
 
-[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.3.1...HEAD
+[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.4.0
 [2.3.1]: https://github.com/briangershon/planning-poker/releases/tag/v2.3.1
 [2.3.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.3.0
 [2.2.1]: https://github.com/briangershon/planning-poker/releases/tag/v2.2.1

@@ -42,41 +42,18 @@ function HomePage() {
             play.
           </p>
           <p>
-            A{' '}
-            <a href="https://planningpoker.games/games/715ffdd8-6a65-42f6-92ff-89f37933acc5">
-              Demo Game
-            </a>{' '}
-            is also available if you don't have a second Github account to test
-            playing a game with multiple players.
-          </p>
-          <p>
             For information about this site and a link to source code, please
             visit <Link to="/about">About</Link>.
           </p>
         </div>
       )}
-      {!userGameIds.length && isLoggedIn && (
-        <p>
-          You can also try a{' '}
-          <a href="https://planningpoker.games/games/715ffdd8-6a65-42f6-92ff-89f37933acc5">
-            Demo Game
-          </a>{' '}
-          if you don't have a second Github account to test playing a game with
-          multiple players.
-        </p>
-      )}
+
+      {userGameIds.length === 0 && isLoggedIn && <p>No active games.</p>}
+
       {userGameIds.length > 0 && isLoggedIn && (
         <div>
           <div>Your Games</div>
           <ul>
-            <li>
-              You can also try a{' '}
-              <a href="https://planningpoker.games/games/715ffdd8-6a65-42f6-92ff-89f37933acc5">
-                Demo Game
-              </a>{' '}
-              if you don't have a second Github account to test playing a game
-              with multiple players.
-            </li>
             {userGameIds.map((gameId) => {
               return (
                 <li key={gameId}>

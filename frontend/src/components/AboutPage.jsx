@@ -37,9 +37,10 @@ function AboutPage() {
       </p>
 
       <p>
-        This was a good fit for Cloudflare <strong>Durable Objects</strong>{' '}
-        since each game manages state for multiple players, as well as{' '}
-        <strong>Websockets</strong> for real-time player updates.
+        Cloudflare <strong>Durable Objects</strong> was ideal for maintaining
+        persistent state for each game and its players, as well as being the
+        central point for consolidating <strong>Websocket</strong> requests
+        coming in from the network edge.
       </p>
 
       <p>
