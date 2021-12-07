@@ -8,16 +8,8 @@ function WalkThroughPage() {
       <h2>Walk Through</h2>
 
       <p>
-        Here's the home page:
-        <img
-          width="100%"
-          src="/walk-through/home-logged-out.png"
-          alt="Home page, not yet logged-in"
-        />
-      </p>
-      <p>
-        If you are not logged in, choose <strong>Login</strong> to login via
-        your Github account:{' '}
+        Visit the home page. If you are not logged in, choose{' '}
+        <strong>Login</strong> and you should see:{' '}
         <img
           width="100%"
           src="/walk-through/home.png"
@@ -25,8 +17,7 @@ function WalkThroughPage() {
         />
       </p>
       <p>
-        Click on <strong>New Game</strong> to create a new game, then type in a
-        story at the top:{' '}
+        Click on <strong>New Game</strong>, then type in your story text:{' '}
         <img
           width="100%"
           src="/walk-through/new-game.png"
@@ -38,10 +29,7 @@ function WalkThroughPage() {
         Invite player(s) by clicking the <strong>Invite Players</strong> button
         to copy the game's URL to the clipboard. Send that URL to the other
         players so they can join.{' '}
-        <em>
-          Note that this URL is the same one as the game's URL in the address
-          bar.
-        </em>
+        <em>This URL is the same one as the game's URL in the address bar.</em>
         <img
           width="100%"
           src="/walk-through/invite.png"
@@ -57,7 +45,7 @@ function WalkThroughPage() {
         />
       </p>
       <p>
-        One player votes:
+        The original player votes:
         <img
           width="100%"
           src="/walk-through/cast-a-vote.png"
@@ -75,9 +63,8 @@ function WalkThroughPage() {
         />
       </p>
       <p>
-        When all players vote (or when the <strong>End Game</strong> is pressed)
-        the final view appears. Optionally, you can click the{' '}
-        <strong>Retry Game</strong> button.
+        When all players have voted (or if <strong>End Game</strong> is pressed)
+        the final view appears.
         <img
           width="100%"
           src="/walk-through/final.png"

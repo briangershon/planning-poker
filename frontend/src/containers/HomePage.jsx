@@ -2,11 +2,12 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { addGameId } from '../store/userSlice';
+import { TShirt } from '../components/TShirt';
+import styles from './HomePage.module.css';
 const { SITE_URL } = import.meta.env;
 
 function HomePage() {
   const userGameIds = useSelector((state) => state.user.gameIds);
-  const gameId = useSelector((state) => state.poker.gameId);
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -31,20 +32,44 @@ function HomePage() {
       {!isLoggedIn && (
         <div>
           <h1>Welcome to Planning Poker!</h1>
-          <h2>What</h2>
-          <p>
-            Estimate the t-shirt size of software stories with your team in
-            real-time.
-          </p>
-          <h2>How</h2>
-          <p>
-            Please <a href="/api/login/github">login</a> to create a game to
-            play.
-          </p>
-          <p>
-            For information about this site and a link to source code, please
-            visit <Link to="/about">About</Link>.
-          </p>
+          <div className={styles.container}>
+            <div>
+              <p>
+                Estimate the t-shirt size of software stories with your team in
+                real-time.
+              </p>
+              <ul>
+                <li>
+                  <p>
+                    <a href="/api/login/github">Login</a> to start a planning
+                    poker game.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    See <a href="/documentation">docs for a walk through</a> of
+                    this app.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Visit <Link to="/about">About</Link> to learn how the game
+                    was built and a link to source code.
+                  </p>
+                </li>
+              </ul>
+            </div>
+
+            <div className={styles.homePageTShirt}>
+              <TShirt
+                name={'Player One'}
+                vote={'XXL'}
+                avatarUrl={
+                  'https://avatars.githubusercontent.com/u/93482534?v=4'
+                }
+              />
+            </div>
+          </div>
         </div>
       )}
 
@@ -64,7 +89,15 @@ function HomePage() {
           </ul>
         </div>
       )}
-      {isLoggedIn && <button onClick={newGame}>New Game</button>}
+      {isLoggedIn && (
+        <>
+          <button onClick={newGame}>New Game</button>{' '}
+          <p>
+            See <a href="/documentation">docs for a walk through</a> of this
+            app.
+          </p>
+        </>
+      )}
     </div>
   );
 }

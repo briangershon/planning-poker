@@ -52,7 +52,6 @@ function AboutPage() {
         >
           github.com/briangershon/planning-poker
         </a>
-        .
       </p>
 
       <h2>Data Privacy</h2>
