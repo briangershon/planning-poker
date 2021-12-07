@@ -149,8 +149,6 @@ function PlayGame() {
             <>
               <GameStory story={game.story} sendStoryUpdate={sendStoryUpdate} />
 
-              <h2>Cast your vote</h2>
-              <GameVote sendVote={sendVote} currentVote={game.you.vote} />
               <div className={styles.players}>
                 <div className={styles.topRight}>
                   <GameInvite

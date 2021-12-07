@@ -68,11 +68,6 @@ function App() {
                 </NavLink>
               </li>
               <li>
-                <a href="https://planningpoker.games/games/715ffdd8-6a65-42f6-92ff-89f37933acc5">
-                  Demo Game
-                </a>
-              </li>
-              <li>
                 <NavLink to="/about" activeClassName={styles.active}>
                   About
                 </NavLink>
