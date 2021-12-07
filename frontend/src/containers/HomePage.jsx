@@ -80,7 +80,8 @@ function HomePage() {
             {userGameIds.map((gameId) => {
               return (
                 <li key={gameId}>
-                  <Link to={`/games/${gameId}`}>Play game in progress</Link>
+                  <Link to={`/games/${gameId}`}>Play game in progress</Link>{' '}
+                  <button onClick={deleteButton}>Delete game</button>
                 </li>
               );
             })}
