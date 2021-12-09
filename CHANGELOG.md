@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [2.5.0] - 2021-12-08
+
+### Added
+
+- Product walk-through. Initial documentation page.
+
 ## [2.4.0] - 2021-12-06
 
 ### Fixed
@@ -126,7 +132,8 @@ Story editing changes (`<GameStory/>`)
 - Hosted on Cloudflare Pages
 - Changelog
 
-[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.4.0...HEAD
+[unreleased]: https://github.com/briangershon/planning-poker/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.5.0
 [2.4.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.4.0
 [2.3.1]: https://github.com/briangershon/planning-poker/releases/tag/v2.3.1
 [2.3.0]: https://github.com/briangershon/planning-poker/releases/tag/v2.3.0

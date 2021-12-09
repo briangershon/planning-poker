@@ -12,6 +12,7 @@ import styles from './App.module.css';
 
 import HomePage from './HomePage';
 import AboutPage from '../components/AboutPage';
+import WalkThroughPage from '../components/WalkThroughPage';
 
 import PlayGame from './PlayGame';
 
@@ -68,16 +69,31 @@ function App() {
                 </NavLink>
               </li>
               <li>
+                <NavLink to="/documentation" activeClassName={styles.active}>
+                  Docs
+                </NavLink>
+              </li>
+              <li>
                 <NavLink to="/about" activeClassName={styles.active}>
                   About
                 </NavLink>
               </li>
-              <li className={styles.submitFeedback}>
+            </ul>
+            <ul className={styles.tinyNav}>
+              <li>
                 <a
                   href="https://github.com/briangershon/planning-poker/issues/new"
                   target="_blank"
                 >
                   Send feedback
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/briangershon/planning-poker/blob/main/CHANGELOG.md"
+                  target="_blank"
+                >
+                  Changelog
                 </a>
               </li>
             </ul>
@@ -89,6 +105,9 @@ function App() {
             <Switch>
               <Route exact path="/">
                 <HomePage />
+              </Route>
+              <Route path="/documentation">
+                <WalkThroughPage />
               </Route>
               <Route path="/about">
                 <AboutPage />

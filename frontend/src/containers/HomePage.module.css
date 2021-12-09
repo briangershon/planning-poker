@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+}
+
+.homePageTShirt {
+  text-align: center;
+  width: 110px;
+  margin: 20px;
+}
+
+@media only screen and (max-width: 650px) {
+  .homePageTShirt {
+    display: none;
+  }
+}

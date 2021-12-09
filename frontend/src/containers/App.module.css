@@ -88,8 +88,8 @@
   /* font-weight: bold; */
 }
 
-.submitFeedback {
-  padding-top: 20px;
+ul.tinyNav {
+  margin-top: 40px;
   font-size: 1.5rem;
 }
 
@@ -107,8 +107,12 @@
   }
 
   .nav ul {
-    padding: 0;
     margin: 0;
+    display: inline-block;
+  }
+
+  ul.tinyNav {
+    padding-left: 20px;
   }
 
   .nav li {
