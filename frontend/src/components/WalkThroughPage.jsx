@@ -1,11 +1,14 @@
 import React from 'react';
+import { MetaSiteDescription } from '../components/MetaData';
 
 function WalkThroughPage() {
   return (
     <div>
       <h1>Documentation</h1>
 
-      <h2>Walk Through</h2>
+      <MetaSiteDescription />
+
+      <h2>Here a walk-through of how to use the site</h2>
 
       <p>
         Visit the home page. If you are not logged in, choose{' '}

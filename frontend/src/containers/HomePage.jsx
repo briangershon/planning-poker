@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { addGameId } from '../store/userSlice';
 import { TShirt } from '../components/TShirt';
+import { MetaSiteDescription } from '../components/MetaData';
 import styles from './HomePage.module.css';
 const { SITE_URL } = import.meta.env;
 
@@ -34,10 +35,7 @@ function HomePage() {
           <h1>Welcome to Planning Poker!</h1>
           <div className={styles.container}>
             <div>
-              <p>
-                Estimate the t-shirt size of software stories with your team in
-                real-time.
-              </p>
+              <MetaSiteDescription />
               <ul>
                 <li>
                   <p>
@@ -47,8 +45,8 @@ function HomePage() {
                 </li>
                 <li>
                   <p>
-                    See <a href="/documentation">docs for a walk through</a> of
-                    this app.
+                    See <a href="/documentation">docs</a> for a product
+                    walk-through.
                   </p>
                 </li>
                 <li>
@@ -93,8 +91,7 @@ function HomePage() {
         <>
           <button onClick={newGame}>New Game</button>{' '}
           <p>
-            See <a href="/documentation">docs for a walk through</a> of this
-            app.
+            See <a href="/documentation">docs</a> for a product walk-through.
           </p>
         </>
       )}
