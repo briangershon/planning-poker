@@ -1,4 +1,4 @@
-# planningpoker.games
+# planning-poker
 
 ![Build Status](https://github.com/briangershon/planning-poker/workflows/Continuous%20Integration/badge.svg)
 
@@ -21,10 +21,6 @@ Cloudflare `Durable Objects` was ideal for maintaining persistent state for each
 ## What's new?
 
 See [Changelog](./CHANGELOG.md).
-
-## Where is the site?
-
-Live website hosted at <https://planningpoker.games/>
 
 ## Github publishing instructions
 
